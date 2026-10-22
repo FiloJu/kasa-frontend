@@ -1,6 +1,6 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 import { apiFetch } from "@/lib/api";
-import { Property } from "@/app/types/property";
+import { Property } from "@/types/property";
 
 /**
  * Fetches the favorite properties saved by a user.

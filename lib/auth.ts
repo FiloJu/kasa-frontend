@@ -1,5 +1,5 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-import type { AuthResponse, MeResponse } from "@/app/types/auth";
+import type { AuthResponse, MeResponse } from "@/types/auth";
 
 /**
  * Fetches the currently authenticated user using the HttpOnly session cookie.

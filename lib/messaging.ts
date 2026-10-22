@@ -1,6 +1,6 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 import { apiFetch } from "@/lib/api";
-import { Thread, Message } from "@/app/types/message";
+import { Thread, Message } from "@/types/message";
 
 /**
  * Starts a conversation with another user, for example from a host card.

@@ -1,5 +1,5 @@
 import { apiFetch } from "./api";
-import type { Property } from "../app/types/property";
+import type { Property } from "../types/property";
 
 export function getProperties(): Promise<Property[]> {
   return apiFetch<Property[]>("/api/properties");
