@@ -22,7 +22,7 @@ export async function getMe(): Promise<MeResponse> {
 
   if (!res.ok) {
    
-    return { user: null }; // IMPORTANT : pas d'exception ici
+    return { user: null }; // IMPORTANT : no exception thrown here, so the caller can handle unauthenticated sessions gracefully.
   }
 
   const data = await res.json();

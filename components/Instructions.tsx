@@ -20,7 +20,7 @@ export default function Instructions() {
 
 
       <div className="flex flex-col lg:flex-row gap-6 mt-10 mb-10" role="list">
-        {/* Carte 1 */}
+        {/* Card 1 */}
         <article
           role="listitem"
           className="w-88.5 lg:w-67.5 h-48.75 border bg-[#842C16] rounded-[10px] p-5 text-white"
@@ -31,7 +31,7 @@ export default function Instructions() {
           </p>
         </article>
 
-        {/* Carte 2 */}
+        {/* Card 2 */}
         <article
           role="listitem"
           className="w-88.5 lg:w-67.5 h-48.75 border bg-[#842C16] rounded-[10px] p-5 text-white"
@@ -42,7 +42,7 @@ export default function Instructions() {
           </p>
         </article>
 
-        {/* Carte 3 */}
+        {/* Card 3 */}
         <article
           role="listitem"
           className="w-88.5 lg:w-67.5 h-48.75 border bg-[#842C16] rounded-[10px] p-5 text-white"

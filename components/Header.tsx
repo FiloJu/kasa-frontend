@@ -23,7 +23,7 @@ export default function Header() {
 
   return (
     <header className="w-full flex justify-center pt-8 relative z-50">
-      <div className="w-full max-w-195.5 h-[56px] bg-white rounded-10 flex items-center justify-center gap-12 px-4">
+      <div className="relative w-full max-w-195.5 h-[56px] bg-white rounded-10 flex items-center justify-between px-4">
 
         {/* Navigation left */}
         <nav className="flex gap-5">
@@ -32,20 +32,12 @@ export default function Header() {
         </nav>
 
         {/* Center logo */}
-        <div>
+        <div className="absolute left-1/2 -translate-x-1/2">
           <Logo />
         </div>
 
         {/* Right actions */}
-        <div className="flex items-center gap-4 text-[12px]">
-          {user && <p>Bonjour {user.name}</p>}
-
-          <Link href="/add-property" className="flex items-center gap- text-main-red text-[14px] mr-4">
-          </Link>
-        </div>
-
-        {/* Right actions */}
-        <div className="flex items-center gap-4 text-[12px]">
+        <div className="ml-auto flex items-center gap-4 text-[12px]">
           {user && <p>Bonjour {user.name}</p>}
 
           <Link href="/add-property" className="flex items-center gap- text-main-red text-[14px] mr-4">

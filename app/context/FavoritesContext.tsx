@@ -37,7 +37,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   /* -------------------------------------------------------
-     FETCH FAVORIS + PROPRIÉTÉS
+     FETCH FAVORITES + PROPERTIES
   -------------------------------------------------------- */
   const refreshFavorites = useCallback(async () => {
     if (!user) return;
@@ -62,7 +62,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   }, [user, authLoading, pathname]);
 
   /* -------------------------------------------------------
-     AUTO-LOAD QUAND USER CHANGE
+     AUTO-LOAD WHEN USER CHANGES
   -------------------------------------------------------- */
   useEffect(() => {
     if (!user) return;
@@ -73,7 +73,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   }, [user, authLoading, refreshFavorites, pathname]);
 
   /* -------------------------------------------------------
-     CHECK FAVORI
+     CHECK FAVORITE STATUS
   -------------------------------------------------------- */
   const isFavorite = useCallback(
     (propertyId: string) => favorites.includes(propertyId),
@@ -81,7 +81,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   );
 
   /* -------------------------------------------------------
-     TOGGLE FAVORI
+     TOGGLE FAVORITE
   -------------------------------------------------------- */
   const toggle = useCallback(
     async (propertyId: string) => {
@@ -89,7 +89,6 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
       const currentlyFavorite = favorites.includes(propertyId);
 
-      // Optimistic UI
       setFavorites((prev) =>
         currentlyFavorite
           ? prev.filter((id) => id !== propertyId)
