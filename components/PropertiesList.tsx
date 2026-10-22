@@ -1,5 +1,5 @@
 import { getProperties } from "@/lib/properties";
-import { Property } from "@/app/types/property";
+import { Property } from "@/types/property";
 import PropertyCard from "./PropertyCard";
 
 export default async function PropertiesList() {
