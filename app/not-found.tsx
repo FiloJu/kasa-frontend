@@ -14,7 +14,7 @@ export default function NotFound() {
       </p>
       <div className="flex flex-col gap-4 w-full max-w-45">
         <Button href="/" variant="primary">Accueil</Button>
-        <Button href="/" variant="primary">Logements</Button>
+        <Button href="/properties" variant="primary">Logements</Button>
       </div>
     </div>
   )
