@@ -1,10 +1,6 @@
 import Header from "@/components/Header";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return (
-    <main>
-      <Header />
-      <p>Mon projet Next.js fonctionne !</p>
-    </main>
-  );
+  redirect("/home");
 }
