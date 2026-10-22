@@ -4,9 +4,9 @@ import { Suspense } from 'react'
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { AuthProvider } from "@/app/context/AuthContext";
-import { FavoritesProvider } from "@/app/context/FavoritesContext";
-import { MessagingProvider } from "@/app/context/MessagingContext";
+import { AuthProvider } from "@/context/AuthContext";
+import { FavoritesProvider } from "@/context/FavoritesContext";
+import { MessagingProvider } from "@/context/MessagingContext";
 
 const inter = Inter({
   subsets: ['latin'],

@@ -45,10 +45,15 @@
 }
 
 /* -------------------------------------------------------
-   STYLES GLOBAUX
-------------------------------------------------------- */
+   GLOBAL STYLES
+-------------------------------------------------------- */
+html,
 body {
-  background: var(--background);
+  background-color: #FFFBF9;
+}
+
+body {
+  background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
   margin: 0;
