@@ -10,7 +10,7 @@ export default function Footer() {
         
         {/* Right: Copyright */}
         <div className="text-[12px] font-medium text-[#565656]">
-          <p>© 2025 Kasa. All rights reserved</p>
+          <p>© 2026 Kasa. All rights reserved</p>
         </div>
       </div>
     </footer>
