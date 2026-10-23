@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Logo from "@/components/Logo";
 
 import heartIcon from "../public/icons/heart.svg";
@@ -14,9 +14,11 @@ import { useMessaging } from "@/context/MessagingContext";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
 
   // Always call hooks.
-  const { user } = useAuthContext();
+  const { user, logout } = useAuthContext();
   const favoritesCtx = useFavoritesContext();
   const messagingCtx = useMessaging();
 
@@ -24,8 +26,37 @@ export default function Header() {
   const favoritesCount = user ? favoritesCtx.favorites.length : 0;
   const unreadCount = user ? messagingCtx.unreadCount : 0;
 
+  useEffect(() => {
+    function handlePointerDown(event: PointerEvent) {
+      if (!headerRef.current?.contains(event.target as Node)) {
+        setAccountMenuOpen(false);
+        setMobileMenuOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setAccountMenuOpen(false);
+        setMobileMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  async function handleLogout() {
+    setAccountMenuOpen(false);
+    setMobileMenuOpen(false);
+    await logout();
+  }
+
   return (
-    <header className="relative z-50 flex w-full justify-center px-2 pt-2 md:px-0 md:pt-8">
+    <header ref={headerRef} className="relative z-50 flex w-full justify-center px-2 pt-2 md:px-0 md:pt-8">
       <div className="relative flex h-16 w-full max-w-195.5 items-center justify-between rounded-10 bg-white px-4 md:h-[56px]">
 
         {/* Navigation left */}
@@ -41,8 +72,6 @@ export default function Header() {
 
         {/* Right actions */}
         <div className="ml-auto hidden items-center gap-4 text-[12px] md:flex">
-          {user && <p>Bonjour {user.name}</p>}
-
           <Link href="/add-property" className="flex items-center gap- text-main-red text-[14px] mr-4">
             + Ajouter un logement
           </Link>
@@ -60,7 +89,7 @@ export default function Header() {
           <div className="w-px h-2 bg-main-red"></div>
 
           {/* Messages */}
-          <Link href="/messaging" className="relative">
+          <Link href="/messages" className="relative">
             <Image src={messageIcon} alt="Messages" width={20} height={20} className="w-3 h-3" />
             {user && unreadCount > 0 && (
               <span className="absolute -top-3 -right-3 bg-main-red text-white text-[12px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
@@ -68,6 +97,53 @@ export default function Header() {
               </span>
             )}
           </Link>
+
+          {user && (
+            <div className="relative">
+              <button
+                type="button"
+                aria-label={`Ouvrir le menu du compte de ${user.name}`}
+                aria-expanded={accountMenuOpen}
+                aria-controls="account-menu"
+                onClick={() => setAccountMenuOpen((open) => !open)}
+                className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#99331A]"
+              >
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  className="h-6 w-6 fill-none stroke-current text-gray-dark"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="8" r="3.25" />
+                  <path d="M5.5 20c.45-3.2 2.85-5.25 6.5-5.25s6.05 2.05 6.5 5.25" />
+                </svg>
+              </button>
+              {accountMenuOpen && (
+                <nav
+                  id="account-menu"
+                  aria-label="Menu du compte"
+                  className="absolute right-0 top-full mt-2 flex w-52 flex-col rounded-[10px] border border-gray-light bg-white p-2 shadow-lg"
+                >
+                  <Link
+                    href="/profile"
+                    onClick={() => setAccountMenuOpen(false)}
+                    className="rounded-[6px] px-3 py-2.5 text-sm text-black hover:bg-[#FFFBF9]"
+                  >
+                    Mon profil
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="rounded-[6px] px-3 py-2.5 text-left text-sm text-[#99331A] hover:bg-[#FFFBF9]"
+                  >
+                    Déconnexion
+                  </button>
+                </nav>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Mobile header */}
@@ -103,7 +179,7 @@ export default function Header() {
         >
           <Link href="/" onClick={() => setMobileMenuOpen(false)} className="text-lg">Accueil</Link>
           <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="text-lg">À propos</Link>
-          <Link href="/messaging" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-between text-lg">
+          <Link href="/messages" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-between text-lg">
             Messagerie
             {user && unreadCount > 0 && (
               <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#99331A] px-1 text-xs font-bold text-white">
@@ -119,6 +195,20 @@ export default function Header() {
               </span>
             )}
           </Link>
+          {user && (
+            <>
+              <Link href="/profile" onClick={() => setMobileMenuOpen(false)} className="text-lg">
+                Mon profil
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex h-11 items-center justify-center rounded-[10px] border border-[#99331A] px-4 text-sm font-medium text-[#99331A]"
+              >
+                Déconnexion
+              </button>
+            </>
+          )}
           <Link
             href="/add-property"
             onClick={() => setMobileMenuOpen(false)}
