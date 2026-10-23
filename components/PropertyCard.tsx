@@ -7,13 +7,13 @@ import { useFavoritesContext } from "@/context/FavoritesContext";
 
 interface PropertyCardProps {
   property: Property;
- }
+}
 
-export default function Card({ property }: { property: Property }) {
+export default function Card({ property }: PropertyCardProps) {
   const favoritesContext = useFavoritesContext();
   const { user } = useAuthContext();
 
-  const { favorites, isFavorite, toggle } = favoritesContext;
+  const { isFavorite, toggle } = favoritesContext;
   const favorite = isFavorite(String(property.id));
 
   const handleFavorite = (e: React.MouseEvent) => {
@@ -30,7 +30,7 @@ export default function Card({ property }: { property: Property }) {
 
   return (
     <Link
-      href={`/property/${property.id}`}
+      href={`/properties/${property.id}`}
       aria-label={`Voir le logement : ${property.title}`}
       className="block w-88.75 h-138 rounded-10 overflow-hidden hover:shadow-xl transition-shadow bg-white"
     >

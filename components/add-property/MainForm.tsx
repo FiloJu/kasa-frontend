@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAddProperty } from "@/context/AddPropertyContext";
+import { apiFetch } from "@/lib/api";
 
-const equipmentOptions = ["Wi-Fi", "Cuisine équipée", "Parking", "Télévision"];
 const tagOptions = ["Appartement", "Maison", "Studio", "Chalet"];
 
 export default function MainForm({
@@ -16,10 +17,11 @@ export default function MainForm({
 }) {
 
   const router = useRouter();
-  const { formData, updateField, toggleEquipment, toggleTag } = useAddProperty();
+  const { formData, updateField, toggleTag } = useAddProperty();
   const [zipcode, setZipcode] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [submissionError, setSubmissionError] = useState("");
+  const [requiresReauthentication, setRequiresReauthentication] = useState(false);
 
   function validate() {
     const newErrors: { [key: string]: string } = {};
@@ -55,30 +57,29 @@ export default function MainForm({
     const finalLocation = `${zipcode} ${formData.location}`;
     onSubmittingChange(true);
     setSubmissionError("");
+    setRequiresReauthentication(false);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/properties`, {
+      await apiFetch("/api/properties", {
         method: "POST",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
           location: finalLocation,
         }),
       });
-
-
-      if (!res.ok) {
-        setSubmissionError("La création du logement a échoué. Vérifiez les informations et réessayez.");
-        console.error("Property creation failed:", await res.text());
-        return;
-      }
-
-      await res.json();
       router.push("/home");
 
     } catch (err) {
-      setSubmissionError("Impossible de contacter le serveur. Réessayez plus tard.");
+      const message = err instanceof Error
+        ? err.message
+        : "Impossible de contacter le serveur. Réessayez plus tard.";
+      if (message.toLowerCase().includes("insufficient role")) {
+        setRequiresReauthentication(true);
+        setSubmissionError("Votre rôle hôte a changé, mais votre session utilise encore l’ancien jeton. Reconnectez-vous pour actualiser vos droits.");
+      } else {
+        setSubmissionError(message);
+      }
       console.error("Property creation request failed:", err);
     } finally {
       onSubmittingChange(false);
@@ -90,13 +91,14 @@ export default function MainForm({
     <form
       id="property-form"
       onSubmit={handleSubmit}
+      noValidate
       className="flex w-full flex-col gap-6 rounded-[10px] border border-gray-light bg-white p-5 md:p-8"
       aria-labelledby="add-property-title"
     >
       {/* Main property details */}
       <div className="flex flex-col gap-1">
         <label htmlFor="title" className="text-[14px] font-medium">
-          Titre
+          Titre de la propriété
         </label>
 
         <input
@@ -149,7 +151,7 @@ export default function MainForm({
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="location" className="text-[14px] font-medium">Ville et quartier</label>
+          <label htmlFor="location" className="text-[14px] font-medium">Localisation</label>
           <input id="location" name="location" type="text" value={formData.location} onChange={(e) => updateField("location", e.target.value)} required className="h-10 rounded-[4px] border border-gray-light px-3" />
           {errors.location && <p className="text-[12px] text-red-600" aria-live="assertive">{errors.location}</p>}
         </div>
@@ -161,34 +163,8 @@ export default function MainForm({
         </div>
       </div>
 
-      {/* Listing images */}
-      <section className="flex flex-col gap-4 border-t border-gray-light pt-5" aria-labelledby="images-title">
-        <h2 id="images-title" className="text-[18px] font-semibold">Photos</h2>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="cover" className="text-[14px] font-medium">URL de la photo de couverture</label>
-          <input id="cover" type="url" value={formData.cover} onChange={(e) => updateField("cover", e.target.value)} required className="h-10 rounded-[4px] border border-gray-light px-3" />
-          {errors.cover && <p className="text-[12px] text-red-600" aria-live="assertive">{errors.cover}</p>}
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="pictures" className="text-[14px] font-medium">Photos supplémentaires</label>
-          <textarea id="pictures" value={formData.pictures.join("\n")} onChange={(e) => updateField("pictures", e.target.value.split("\n").map((url) => url.trim()).filter(Boolean))} placeholder="Une URL d’image par ligne" rows={3} className="rounded-[4px] border border-gray-light px-3 py-2" />
-          {errors.pictures && <p className="text-[12px] text-red-600" aria-live="assertive">{errors.pictures}</p>}
-        </div>
-      </section>
-
-      {/* Equipment and categories */}
-      <section className="grid gap-6 border-t border-gray-light pt-5 md:grid-cols-2">
-        <fieldset className="flex flex-col gap-3">
-          <legend className="mb-2 text-[18px] font-semibold">Équipements</legend>
-          {equipmentOptions.map((equipment) => (
-            <label key={equipment} className="flex items-center gap-2 text-[14px]">
-              <input type="checkbox" checked={formData.equipments.includes(equipment)} onChange={() => toggleEquipment(equipment)} className="accent-[#99331A]" />
-              {equipment}
-            </label>
-          ))}
-          {errors.equipments && <p className="text-[12px] text-red-600" aria-live="assertive">{errors.equipments}</p>}
-        </fieldset>
-
+      {/* Listing categories */}
+      <section className="border-t border-gray-light pt-5">
         <fieldset className="flex flex-col gap-3">
           <legend className="mb-2 text-[18px] font-semibold">Catégories</legend>
           {tagOptions.map((tag) => (
@@ -201,7 +177,19 @@ export default function MainForm({
         </fieldset>
       </section>
 
-      {submissionError && <p className="text-sm text-red-600" role="alert">{submissionError}</p>}
+      {submissionError && (
+        <div className="flex flex-col gap-2 text-sm text-red-700" role="alert">
+          <p>{submissionError}</p>
+          {requiresReauthentication && (
+            <Link
+              href="/login?returnTo=%2Fadd-property"
+              className="w-fit font-medium underline underline-offset-2"
+            >
+              Se reconnecter
+            </Link>
+          )}
+        </div>
+      )}
     </form>
   );
 }
