@@ -29,6 +29,8 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const [threads, setThreads] = useState<Thread[]>([]);
+  const [threadsLoading, setThreadsLoading] = useState(true);
+  const [threadsError, setThreadsError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
 
   /* -------------------------------------------------------
@@ -45,20 +47,37 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
     if (!user) {
       queueMicrotask(() => {
         setThreads([]);
+        setThreadsLoading(false);
+        setThreadsError(null);
         setMessages([]);
       });
       return;
     }
 
+    let cancelled = false;
     (async () => {
+      await Promise.resolve();
+      if (cancelled) return;
+      setThreadsLoading(true);
+      setThreadsError(null);
+
       try {
         const data = await apiGetThreads();
-        queueMicrotask(() => setThreads(data));
+        if (!cancelled) setThreads(data);
       } catch (err) {
         console.error("Failed to load threads:", err);
-        queueMicrotask(() => setThreads([]));
+        if (!cancelled) {
+          setThreads([]);
+          setThreadsError(err instanceof Error ? err.message : "Impossible de charger les conversations.");
+        }
+      } finally {
+        if (!cancelled) setThreadsLoading(false);
       }
     })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [user, authLoading, pathname]);
 
     /* -------------------------------------------------------
@@ -182,6 +201,8 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
       return {
         currentUser: null,
         threads: [],
+        threadsLoading,
+        threadsError,
         messages: [],
         unreadCount: 0,
         getMessages: () => [],
@@ -197,6 +218,8 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
     return {
       currentUser: user,
       threads,
+      threadsLoading,
+      threadsError,
       messages,
       unreadCount,
       getMessages,
@@ -208,6 +231,8 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
   }, [
     user,
     threads,
+    threadsLoading,
+    threadsError,
     messages,
     unreadCount,
     getMessages,
