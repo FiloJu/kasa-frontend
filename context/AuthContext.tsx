@@ -4,12 +4,8 @@ import { createContext, useContext, useEffect, useState, useCallback } from "rea
 import { useRouter } from "next/navigation";
 
 import type { AuthUser } from "@/types/auth";
-import {
-  getMe,
-  login as apiLogin,
-  register as apiRegister,
-  logoutRequest,
-} from "@/lib/auth";
+import { apiFetch } from "@/lib/api";
+import { login as apiLogin, register as apiRegister } from "@/lib/auth";
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -17,6 +13,7 @@ interface AuthContextType {
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
+  upgradeToOwner: (password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -36,38 +33,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       Load the current user from /auth/me when an auth cookie is present.
     -------------------------------------------------------- */
   const refreshUser = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      const storedUser = localStorage.getItem("auth_user");
 
+      if (!token || !storedUser) {
+        setUser(null);
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("auth_user");
+        return;
+      }
 
-  // Avoid the /auth/me request when the auth token cookie is absent.
- const hasAuthCookie = document.cookie.includes("auth-token=");
-  if (!hasAuthCookie) {
-  
-    setUser(null);
-    setLoading(false);
-    return;
-  }
-
-  
-
-  try {
-    const data = await getMe();
- 
-    setUser(data.user);
-  } catch {
-   
-    setUser(null);
-  } finally {
-  
-    setLoading(false);
-  }
-}, []);
+      setUser(JSON.parse(storedUser) as AuthUser);
+    } catch {
+      setUser(null);
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("auth_user");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
 /* -------------------------------------------------------
   Restore the signed-in user once when the provider mounts.
 -------------------------------------------------------- */
 useEffect(() => {
-
-  refreshUser();
+  queueMicrotask(() => {
+    void refreshUser();
+  });
 }, [refreshUser]);
 
     /* -------------------------------------------------------
@@ -79,6 +72,8 @@ useEffect(() => {
 
     try {
       const data = await apiLogin(email, password);
+      localStorage.setItem("auth_token", data.token);
+      localStorage.setItem("auth_user", JSON.stringify(data.user));
       setUser(data.user);
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -101,6 +96,8 @@ useEffect(() => {
 
     try {
       const data = await apiRegister(name, email, password);
+      localStorage.setItem("auth_token", data.token);
+      localStorage.setItem("auth_user", JSON.stringify(data.user));
       setUser(data.user);
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -114,19 +111,46 @@ useEffect(() => {
     }
   }
 
+  async function upgradeToOwner(password: string) {
+    if (!user) throw new Error("Vous devez être connecté pour activer le profil hôte.");
+
+    setError(null);
+    setLoading(true);
+
+    try {
+      await apiFetch<AuthUser | { user: AuthUser }>(`/api/users/${user.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: "owner" }),
+      });
+
+      const refreshedSession = await apiLogin(user.email, password);
+      if (refreshedSession.user.role !== "owner" && refreshedSession.user.role !== "admin") {
+        throw new Error("Le profil hôte n’a pas été activé. Contactez l’assistance.");
+      }
+
+      localStorage.setItem("auth_token", refreshedSession.token);
+      localStorage.setItem("auth_user", JSON.stringify(refreshedSession.user));
+      setUser(refreshedSession.user);
+    } catch (err: unknown) {
+      const message = err instanceof Error
+        ? err.message
+        : "Impossible d’activer le profil hôte.";
+      setError(message);
+      throw new Error(message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
     /* -------------------------------------------------------
       Sign out, clear locally cached user data, and redirect to login.
     -------------------------------------------------------- */
   async function logout() {
     setLoading(true);
 
-    try {
-      await logoutRequest();
-    } catch {
-      // Clear the local session even if the backend logout request fails.
-    }
-
-    // Remove shared cached authentication and messaging data.
+    // Clear the local JWT session and cached messaging data.
+    localStorage.removeItem("auth_token");
     localStorage.removeItem("auth_user");
     localStorage.removeItem("messages");
     localStorage.removeItem("threads");
@@ -152,6 +176,7 @@ useEffect(() => {
         error,
         login,
         register,
+        upgradeToOwner,
         logout,
         refreshUser,
       }}

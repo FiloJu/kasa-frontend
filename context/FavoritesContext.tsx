@@ -54,8 +54,12 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         setProperties(data);
         setError(null);
       });
-    } catch  {
-      setError("Erreur lors du chargement des favoris");
+    } catch (loadError) {
+      setError(
+        loadError instanceof Error
+          ? loadError.message
+          : "Erreur lors du chargement des favoris"
+      );
     } finally {
       queueMicrotask(() => setLoading(false));
     }
@@ -69,7 +73,9 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     if (pathname === "/login") return;
     if (authLoading) return;
 
-    refreshFavorites();
+    queueMicrotask(() => {
+      void refreshFavorites();
+    });
   }, [user, authLoading, refreshFavorites, pathname]);
 
   /* -------------------------------------------------------
