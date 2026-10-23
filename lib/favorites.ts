@@ -1,4 +1,3 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 import { apiFetch } from "@/lib/api";
 import { Property } from "@/types/property";
 
@@ -16,7 +15,7 @@ export async function getFavorites(userId: string): Promise<Property[]> {
     return [];
   }
 
-  return apiFetch<Property[]>(`${API_URL}/api/users/${userId}/favorites`);
+  return apiFetch<Property[]>(`/api/users/${userId}/favorites`);
 }
 
 /**
@@ -35,7 +34,7 @@ export async function toggleFavorite(
 ): Promise<{ success: boolean }> {
   if (!propertyId) return { success: false };
 
-  return apiFetch(`${API_URL}/api/properties/${propertyId}/favorite`, {
+  return apiFetch(`/api/properties/${propertyId}/favorite`, {
     method: isFavorite ? "DELETE" : "POST",
   });
 }

@@ -8,10 +8,35 @@ export async function apiFetch<T>(
     throw new Error("NEXT_PUBLIC_API_URL n'est pas défini");
   }
 
-  const response = await fetch(`${API_URL}${endpoint}`, options);
+  const path = `/${endpoint.replace(/^\/+/, "")}`;
+  const url = /^https?:\/\//i.test(endpoint)
+    ? endpoint
+    : typeof window !== "undefined"
+      ? path
+      : `${API_URL.replace(/\/+$/, "")}${path}`;
+  const headers = new Headers(options?.headers);
+
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("auth_token");
+    if (token && !headers.has("Authorization")) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
 
   if (!response.ok) {
-    throw new Error(`Erreur API ${response.status} sur ${endpoint}`);
+    let message = `Erreur API ${response.status} sur ${endpoint}`;
+    try {
+      const error = await response.json();
+      message = error.message || error.error || message;
+    } catch {
+      // Keep the status-based message when the response is not JSON.
+    }
+    throw new Error(message);
   }
 
   return response.json() as Promise<T>;

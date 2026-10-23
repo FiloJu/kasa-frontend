@@ -1,6 +1,32 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 import type { AuthResponse, MeResponse } from "@/types/auth";
 
+async function authFetch(path: string, options: RequestInit = {}): Promise<Response> {
+  if (!API_URL) {
+    throw new Error("L’URL de l’API n’est pas configurée.");
+  }
+
+  try {
+    return await fetch(`/auth/${path}`, {
+      ...options,
+      credentials: "include",
+    });
+  } catch {
+    throw new Error(
+      "Impossible de joindre le service d’authentification. Vérifiez que l’API est disponible."
+    );
+  }
+}
+
+async function getErrorMessage(response: Response, fallback: string): Promise<string> {
+  try {
+    const error = await response.json();
+    return error.message || error.error || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 /**
  * Fetches the currently authenticated user using the HttpOnly session cookie.
  * A non-successful response is treated as an unauthenticated session and returns
@@ -13,9 +39,8 @@ import type { AuthResponse, MeResponse } from "@/types/auth";
 export async function getMe(): Promise<MeResponse> {
 
 
-  const res = await fetch(`${API_URL}/auth/me`, {
+  const res = await authFetch("me", {
     method: "GET",
-    credentials: "include",
   });
 
 
@@ -43,20 +68,14 @@ export async function getMe(): Promise<MeResponse> {
  * @throws {Error} If the request fails; uses the server error message when available.
  */
 export async function login(email: string, password: string): Promise<AuthResponse> {
-  const res = await fetch(`${API_URL}/auth/login`, {
+  const res = await authFetch("login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    credentials: "include",
     body: JSON.stringify({ email, password }),
   });
 
   if (!res.ok) {
-    let errorMessage = "Erreur de connexion";
-    try {
-      const error = await res.json();
-      errorMessage = error.message || errorMessage;
-    } catch {}
-    throw new Error(errorMessage);
+    throw new Error(await getErrorMessage(res, "Erreur de connexion"));
   }
 
   return res.json();
@@ -79,20 +98,14 @@ export async function register(
   email: string,
   password: string
 ): Promise<AuthResponse> {
-  const res = await fetch(`${API_URL}/auth/register`, {
+  const res = await authFetch("register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    credentials: "include",
     body: JSON.stringify({ name, email, password }),
   });
 
   if (!res.ok) {
-    let errorMessage = "Erreur lors de l'inscription";
-    try {
-      const error = await res.json();
-      errorMessage = error.message || errorMessage;
-    } catch {}
-    throw new Error(errorMessage);
+    throw new Error(await getErrorMessage(res, "Erreur lors de l'inscription"));
   }
 
   return res.json();
@@ -107,9 +120,8 @@ export async function register(
  * @throws {Error} If the server does not accept the logout request.
  */
 export async function logoutRequest(): Promise<void> {
-  const res = await fetch(`${API_URL}/auth/logout`, {
+  const res = await authFetch("logout", {
     method: "POST",
-    credentials: "include",
   });
 
   if (!res.ok) {

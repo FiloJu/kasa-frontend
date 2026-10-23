@@ -1,4 +1,3 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 import { apiFetch } from "@/lib/api";
 import { Thread, Message } from "@/types/message";
 
@@ -17,7 +16,7 @@ export async function startConversation(
   otherUserId: string,
   content: string
 ): Promise<{ threadId: string }> {
-  return apiFetch(`${API_URL}/api/messaging/start`, {
+  return apiFetch("/api/messaging/start", {
     method: "POST",
     body: JSON.stringify({ otherUserId, content }),
   });
@@ -33,7 +32,7 @@ export async function startConversation(
  * @throws {Error} If the request fails, including when the user is unauthenticated.
  */
 export async function getThreads(): Promise<Thread[]> {
-  return apiFetch<Thread[]>(`${API_URL}/api/messaging/threads`);
+  return apiFetch<Thread[]>("/api/messaging/threads");
 }
 
 /**
@@ -48,7 +47,7 @@ export async function getThreads(): Promise<Thread[]> {
  */
 export async function getMessages(threadId: string): Promise<Message[]> {
   return apiFetch<Message[]>(
-    `${API_URL}/api/messaging/threads/${threadId}/messages`
+    `/api/messaging/threads/${threadId}/messages`
   );
 }
 
@@ -67,7 +66,7 @@ export async function sendMessage(
   threadId: string,
   content: string
 ): Promise<{ ok: boolean }> {
-  return apiFetch(`${API_URL}/api/messaging/threads/${threadId}/messages`, {
+  return apiFetch(`/api/messaging/threads/${threadId}/messages`, {
     method: "POST",
     body: JSON.stringify({ content }),
   });
