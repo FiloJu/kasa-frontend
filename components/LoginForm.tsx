@@ -94,7 +94,7 @@ export default function LoginForm() {
 
         <p className="mt-3 text-[14px] text-main-red font-normal mx-auto">
           Pas encore de compte ?{" "}
-          <Link href="/register" className="text-main-red font-normal hover:text-dark-orange transition-colors">
+          <Link href="/signin" className="text-main-red font-normal hover:text-dark-orange transition-colors">
             Inscrivez-vous
           </Link>
         </p>
