@@ -35,7 +35,7 @@ export default function Header() {
         </nav>
 
         {/* Center logo */}
-        <div className="hidden md:absolute md:left-1/2 md:block md:-translate-x-1/2">
+        <div className="hidden md:absolute md:left-[42%] md:block md:-translate-x-1/2">
           <Logo size="small" />
         </div>
 
