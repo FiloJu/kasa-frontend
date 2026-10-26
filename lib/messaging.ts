@@ -13,12 +13,13 @@ import { Thread, Message } from "@/types/message";
  * @throws {Error} If the request fails, including when the user is unauthenticated.
  */
 export async function startConversation(
+  propertyId: string,
   otherUserId: string,
   content: string
 ): Promise<{ threadId: string }> {
   return apiFetch("/api/messaging/start", {
     method: "POST",
-    body: JSON.stringify({ otherUserId, content }),
+    body: JSON.stringify({ propertyId, otherUserId, content }),
   });
 }
 

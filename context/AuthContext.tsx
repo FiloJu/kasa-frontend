@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from "rea
 import { useRouter } from "next/navigation";
 
 import type { AuthUser } from "@/types/auth";
-import { apiFetch } from "@/lib/api";
+import { apiFetch } from "../lib/api";
 import { login as apiLogin, register as apiRegister } from "@/lib/auth";
 
 interface AuthContextType {

@@ -1,5 +1,4 @@
 import Image from "next/image";
-import banner from "../public/assets/hero-home.png";
 
 export default function HeroSection() {
   return (
@@ -21,8 +20,8 @@ export default function HeroSection() {
       <div className="relative h-114.5 w-88.75 md:w-183.5 lg:w-full mt-10">
 
         <Image
-          src={banner}
-          alt="Illustration d’un paysage accueillant représentant le confort et le voyage"
+          src="/assets/hero-home.png"
+          alt="Illustration d'un paysage accueillant représentant le confort et le voyage"
           fill
           className="object-cover rounded-20"
           priority

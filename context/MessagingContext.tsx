@@ -143,6 +143,7 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
   const startConversationWithHost = useCallback(
     async (
       host: UserPublic | Host,
+      propertyId: string,
       suggestedMessage?: string
     ): Promise<string | undefined> => {
       // Do not start a conversation from the login page.
@@ -152,18 +153,37 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
 
       try {
         const { threadId } = await startConversation(
+          propertyId,
           String(host.id),
           suggestedMessage ?? ""
         );
 
-        const updatedThreads = await apiGetThreads();
-        queueMicrotask(() => setThreads(updatedThreads));
+        const newThread: Thread = {
+          id: threadId,
+          otherUser: host,
+          lastMessage: suggestedMessage ?? "",
+          updatedAt: new Date().toISOString(),
+        };
+        setThreads((previous) => [
+          ...previous.filter((thread) => thread.id !== threadId),
+          newThread,
+        ]);
+
+        try {
+          const updatedThreads = await apiGetThreads();
+          if (updatedThreads.some((thread) => thread.id === threadId)) {
+            setThreads(updatedThreads);
+          }
+        } catch (refreshError) {
+          console.error("Failed to refresh threads after starting a conversation:", refreshError);
+        }
 
         await loadMessagesForThread(threadId);
 
         return threadId;
       } catch (err) {
         console.error("Failed to start conversation:", err);
+        throw err;
       }
     },
     [user, loadMessagesForThread, pathname]
@@ -188,6 +208,7 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
         queueMicrotask(() => setThreads(updatedThreads));
       } catch (err) {
         console.error("Failed to send message:", err);
+        throw err;
       }
     },
     [user, loadMessagesForThread, pathname]

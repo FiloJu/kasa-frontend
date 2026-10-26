@@ -21,6 +21,8 @@ export interface Thread {
 export interface MessagingContextType {
   currentUser: AuthUser | null;
   threads: Thread[];
+  threadsLoading: boolean;
+  threadsError: string | null;
   messages: Message[];
   unreadCount: number;
   getMessages: (threadId: string) => Message[];
@@ -28,6 +30,7 @@ export interface MessagingContextType {
   getThreadUser: (threadId: string) => UserPublic | Host;
   startConversationWithHost: (
     host: UserPublic | Host,
+    propertyId: string,
     suggestedMessage?: string
   ) => Promise<string | undefined>;
   loadMessagesForThread: (threadId: string) => Promise<void>;

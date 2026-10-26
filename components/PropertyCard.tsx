@@ -2,8 +2,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Property } from "@/types/property";
-import { useAuthContext } from "@/context/AuthContext";
-import { useFavoritesContext } from "@/context/FavoritesContext";
+import { useAuthContext } from "../context/AuthContext";
+import { useFavoritesContext } from "../context/FavoritesContext";
 
 interface PropertyCardProps {
   property: Property;

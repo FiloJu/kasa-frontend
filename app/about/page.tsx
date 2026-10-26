@@ -1,6 +1,4 @@
 import Image from "next/image";
-import About01 from "../../public/assets/hero-a-propos.png";
-import About02 from "../../public/assets/content-a-propos.png";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -29,7 +27,7 @@ export default function AboutPage() {
       {/* Main image */}
       <div className="relative w-full h-[250px] md:h-[350px] rounded-[20px] overflow-hidden">
         <Image
-          src={About01}
+          src="/assets/hero-a-propos.png"
           alt="Maison en bois avec terrasse entourée de verdure"
           fill
           className="object-cover"
@@ -51,7 +49,7 @@ export default function AboutPage() {
           {/* Supporting image for mobile and tablet */}
           <div className="lg:hidden relative h-[280px] rounded-[20px] overflow-hidden">
             <Image
-              src={About02}
+              src="/assets/content-a-propos.png"
               alt="Chalet avec toit triangulaire illuminé au crépuscule"
               fill
               className="object-cover"
@@ -66,7 +64,7 @@ export default function AboutPage() {
         {/* Supporting image for desktop */}
         <div className="hidden lg:block lg:w-[380px] shrink-0 relative h-[350px] rounded-[20px] overflow-hidden">
           <Image
-            src={About02}
+            src="/assets/content-a-propos.png"
             alt="Chalet avec toit triangulaire illuminé au crépuscule"
             fill
             className="object-cover"

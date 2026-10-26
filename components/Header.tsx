@@ -5,9 +5,6 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import Logo from "@/components/Logo";
 
-import heartIcon from "../public/icons/heart.svg";
-import messageIcon from "../public/icons/message.svg";
-
 import { useAuthContext } from "@/context/AuthContext";
 import { useFavoritesContext } from "@/context/FavoritesContext";
 import { useMessaging } from "@/context/MessagingContext";
@@ -78,7 +75,7 @@ export default function Header() {
 
           {/* Favorites */}
           <Link href="/favorites" className="relative">
-            <Image src={heartIcon} alt="Favoris" width={20} height={20} className="w-3 h-3" />
+            <Image src="/icons/heart.svg" alt="Favoris" width={20} height={20} className="w-3 h-3" />
             {user && favoritesCount > 0 && (
               <span className="absolute -top-3 -right-3 bg-main-red text-white text-[12px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                 {favoritesCount}
@@ -90,7 +87,7 @@ export default function Header() {
 
           {/* Messages */}
           <Link href="/messages" className="relative">
-            <Image src={messageIcon} alt="Messages" width={20} height={20} className="w-3 h-3" />
+            <Image src="/icons/message.svg" alt="Messages" width={20} height={20} className="w-3 h-3" />
             {user && unreadCount > 0 && (
               <span className="absolute -top-3 -right-3 bg-main-red text-white text-[12px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                 {unreadCount}

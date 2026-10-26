@@ -1,4 +1,4 @@
-import { getProperties } from "@/lib/properties";
+import { getProperties } from "../lib/properties";
 import { Property } from "@/types/property";
 import PropertyCard from "./PropertyCard";
 

@@ -17,8 +17,19 @@ export default function MessagesPage() {
 		getMessages,
 		getThreadUser,
 		loadMessagesForThread,
+		sendMessage,
 	} = useMessaging();
 	const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
+	const [draft, setDraft] = useState("");
+	const [sending, setSending] = useState(false);
+	const [sendError, setSendError] = useState("");
+
+	useEffect(() => {
+		const threadId = new URLSearchParams(window.location.search).get("threadId");
+		if (threadId) {
+			queueMicrotask(() => setSelectedThreadId(threadId));
+		}
+	}, []);
 
 	useEffect(() => {
 		if (!authLoading && !user) {
@@ -45,6 +56,22 @@ export default function MessagesPage() {
 			})()
 		: null;
 	const selectedMessages = selectedThreadId ? getMessages(selectedThreadId) : [];
+
+	async function handleSendMessage(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+		if (!selectedThreadId || !draft.trim() || sending) return;
+
+		setSending(true);
+		setSendError("");
+		try {
+			await sendMessage(selectedThreadId, draft.trim());
+			setDraft("");
+		} catch (error) {
+			setSendError(error instanceof Error ? error.message : "Impossible d’envoyer le message.");
+		} finally {
+			setSending(false);
+		}
+	}
 
 	return (
 		<article className="mx-auto flex min-h-[calc(100vh-180px)] w-full max-w-6xl flex-col gap-5 px-4 py-6 md:px-8 md:py-8">
@@ -85,7 +112,11 @@ export default function MessagesPage() {
 								<li key={thread.id}>
 									<button
 										type="button"
-										onClick={() => setSelectedThreadId(thread.id)}
+										onClick={() => {
+											setDraft("");
+											setSendError("");
+											setSelectedThreadId(thread.id);
+										}}
 										aria-current={thread.id === selectedThreadId ? "true" : undefined}
 										className={`flex w-full flex-col gap-1 border-b border-gray-light px-5 py-4 text-left transition-colors hover:bg-[#FFFBF9] ${thread.id === selectedThreadId ? "bg-[#FFFBF9]" : "bg-white"}`}
 									>
@@ -122,7 +153,10 @@ export default function MessagesPage() {
 							<div className="flex flex-1 flex-col gap-3 overflow-y-auto p-5">
 								{selectedMessages.length > 0 ? (
 									selectedMessages.map((message) => (
-										<div key={message.id} className="max-w-[85%] rounded-[10px] bg-gray-100 px-4 py-3 text-sm text-black">
+										<div
+											key={message.id}
+											className={`max-w-[85%] rounded-[10px] px-4 py-3 text-sm text-black ${String(message.sender.id) === String(user.id) ? "self-end bg-[#FFFBF9]" : "self-start bg-gray-100"}`}
+										>
 											<p>{message.content}</p>
 											<time className="mt-2 block text-[11px] text-gray-dark">
 												{new Date(message.createdAt).toLocaleString("fr-FR")}
@@ -131,10 +165,31 @@ export default function MessagesPage() {
 									))
 								) : (
 									<p className="m-auto text-center text-sm text-gray-dark">
-										Aucun message chargé dans cette conversation.
+										Commencez la conversation en envoyant un message.
 									</p>
 								)}
 							</div>
+							<form onSubmit={handleSendMessage} className="border-t border-gray-light p-4">
+								{sendError && <p className="mb-2 text-sm text-red-700" role="alert">{sendError}</p>}
+								<div className="flex items-end gap-3">
+									<label htmlFor="message-draft" className="sr-only">Votre message</label>
+									<textarea
+										id="message-draft"
+										value={draft}
+										onChange={(event) => setDraft(event.target.value)}
+										placeholder="Écrivez votre message…"
+										rows={2}
+										className="min-h-11 flex-1 resize-y rounded-[8px] border border-gray-light px-3 py-2 text-sm outline-none focus:border-[#99331A]"
+									/>
+									<button
+										type="submit"
+										disabled={!draft.trim() || sending}
+										className="h-11 shrink-0 rounded-[10px] bg-[#99331A] px-5 text-sm font-medium text-white hover:bg-[#7D2915] disabled:cursor-not-allowed disabled:opacity-50"
+									>
+										{sending ? "Envoi…" : "Envoyer"}
+									</button>
+								</div>
+							</form>
 						</>
 					) : (
 						<div className="hidden flex-1 items-center justify-center p-8 text-center text-sm text-gray-dark md:flex">

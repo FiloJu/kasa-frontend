@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import Button from "@/components/Button";
 import Icon from "@/components/Icon";
+import ContactHostButton from "@/components/property/ContactHostButton";
 import PropertyGallery from "@/components/property/PropertyGallery";
 import { getPropertyById } from "@/lib/properties";
 
@@ -176,6 +177,7 @@ export default async function PropertyPage({ params }: PageProps) {
 						</div>
 						<p className="font-medium text-black">{property.host.name}</p>
 					</div>
+					<ContactHostButton host={property.host} propertyId={property.id} />
 
 					<div className="flex items-center justify-between border-t border-gray-light pt-4">
 						<span className="text-sm text-gray-dark">Note moyenne</span>
