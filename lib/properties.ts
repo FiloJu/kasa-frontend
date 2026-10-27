@@ -2,7 +2,8 @@ import { apiFetch } from "./api";
 import type { Property } from "../types/property";
 import mockProperties from "../data/mock-properties.json";
 
-const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === "true";
+// In production on Vercel, use mock data since backend is complex to serverless
+const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === "true" || process.env.NODE_ENV === "production";
 const mocks = mockProperties as Property[];
 
 export async function getProperties(): Promise<Property[]> {
