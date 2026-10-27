@@ -1,9 +1,13 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 import type { AuthResponse, MeResponse } from "@/types/auth";
+import mockAuthUsers from "@/data/mock-auth-users.json";
+
+// Use mock auth in production (Vercel) as fallback
+const USE_MOCK_AUTH = process.env.NODE_ENV === "production";
 
 async function authFetch(path: string, options: RequestInit = {}): Promise<Response> {
   if (!API_URL) {
-    throw new Error("L’URL de l’API n’est pas configurée.");
+    throw new Error("L'URL de l'API n'est pas configurée.");
   }
 
   try {
@@ -13,7 +17,7 @@ async function authFetch(path: string, options: RequestInit = {}): Promise<Respo
     });
   } catch {
     throw new Error(
-      "Impossible de joindre le service d’authentification. Vérifiez que l’API est disponible."
+      "Impossible de joindre le service d'authentification. Vérifiez que l'API est disponible."
     );
   }
 }
@@ -68,6 +72,28 @@ export async function getMe(): Promise<MeResponse> {
  * @throws {Error} If the request fails; uses the server error message when available.
  */
 export async function login(email: string, password: string): Promise<AuthResponse> {
+  // Mock auth for production (Vercel)
+  if (USE_MOCK_AUTH) {
+    const user = mockAuthUsers.find(
+      (u: any) => u.email === email && u.password === password
+    );
+    if (!user) {
+      throw new Error("Email ou mot de passe invalide");
+    }
+    // Generate a fake JWT token for mock
+    const token = Buffer.from(JSON.stringify({ id: user.id, email: user.email })).toString('base64');
+    return {
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        picture: user.picture,
+        role: user.role,
+      },
+    };
+  }
+
   const res = await authFetch("login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -98,6 +124,16 @@ export async function register(
   email: string,
   password: string
 ): Promise<AuthResponse> {
+  // Mock auth for production (Vercel)
+  if (USE_MOCK_AUTH) {
+    // Check if email already exists
+    if (mockAuthUsers.some((u: any) => u.email === email)) {
+      throw new Error("Cet email est déjà enregistré");
+    }
+    // In production mock, don't actually register - just error
+    throw new Error("L'inscription n'est pas disponible en mode démonstration. Utilisez test@example.com");
+  }
+
   const res = await authFetch("register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
