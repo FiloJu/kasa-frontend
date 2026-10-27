@@ -85,10 +85,10 @@ export async function login(email: string, password: string): Promise<AuthRespon
     return {
       token,
       user: {
-        id: user.id,
+        id: String(user.id),
         name: user.name,
         email: user.email,
-        picture: user.picture,
+        picture: user.picture || undefined,
         role: user.role,
       },
     };
