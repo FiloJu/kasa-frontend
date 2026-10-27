@@ -114,7 +114,7 @@ Pour que l'application fonctionne complètement en local, vous devez aussi lance
 L'application est déployée sur **Vercel** et se met à jour automatiquement à chaque push sur la branche `main`.
 
 ### URL de production
-- Frontend : https://kasa-frontend.vercel.app
+- Frontend : https://kasa-three-xi.vercel.app
 - Backend : https://kasa-backend-mauve.vercel.app
 
 **Note** : En production sur Vercel, l'application utilise des données mock (mock-properties.json et mock-auth-users.json) pour les propriétés et l'authentification. Les favoris sont persistés en localStorage.

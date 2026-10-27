@@ -7,17 +7,17 @@ export const metadata = {
   description:
     "Trouvez des logements uniques, confortables et vérifiés partout en France. Réservez facilement votre prochain séjour avec Kasa.",
   alternates: {
-    canonical: "",
+    canonical: "https://kasa-three-xi.vercel.app",
   },
   openGraph: {
     title: "Kasa – Locations d’hébergements partout en France",
     description:
       "Trouvez des logements uniques, confortables et vérifiés partout en France.",
-    url: "",
+    url: "https://kasa-three-xi.vercel.app",
     siteName: "Kasa",
     images: [
       {
-        url: "",
+        url: "https://kasa-three-xi.vercel.app/assets/hero-home.png",
         width: 1200,
         height: 630,
         alt: "Kasa – Trouvez votre logement idéal",
@@ -31,7 +31,7 @@ export const metadata = {
     title: "Kasa – Locations d’hébergements partout en France",
     description:
       "Trouvez des logements uniques, confortables et vérifiés partout en France.",
-    images: [""],
+    images: ["https://kasa-three-xi.vercel.app/assets/hero-home.png"],
   },
 };
 
@@ -45,11 +45,11 @@ export default function Home() {
             "@context": "https://schema.org",
             "@type": "WebSite",
             name: "Kasa",
-            url: "",
+            url: "https://kasa-three-xi.vercel.app",
             potentialAction: {
               "@type": "SearchAction",
               target:
-                "",
+                "https://kasa-three-xi.vercel.app/home?search={search_term_string}",
               "query-input": "required name=search_term_string",
             },
           }),
@@ -63,8 +63,8 @@ export default function Home() {
             "@context": "https://schema.org",
             "@type": "Organization",
             name: "Kasa",
-            url: "",
-            logo: "",
+            url: "https://kasa-three-xi.vercel.app",
+            logo: "https://kasa-three-xi.vercel.app/assets/logo-picto.svg",
           }),
         }}
       />
