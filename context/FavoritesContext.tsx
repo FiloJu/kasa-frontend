@@ -102,7 +102,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
       );
 
       try {
-        await toggleFavorite(propertyId, currentlyFavorite);
+        await toggleFavorite(propertyId, currentlyFavorite, String(user.id));
         refreshFavorites();
       } catch {
         // rollback
