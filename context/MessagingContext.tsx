@@ -146,6 +146,8 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
       propertyId: string,
       suggestedMessage?: string
     ): Promise<string | undefined> => {
+      console.log("startConversationWithHost called with:", { propertyId, hostId: host.id, suggestedMessage });
+      
       // Do not start a conversation from the login page.
       if (pathname === "/login") return;
 
