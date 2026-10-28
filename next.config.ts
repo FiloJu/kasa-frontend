@@ -32,7 +32,14 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    remotePatterns: apiImagePattern ? [apiImagePattern] : [],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "s3-eu-west-1.amazonaws.com",
+        pathname: "/course.oc-static.com/projects/front-end-kasa-project/**",
+      },
+      ...(apiImagePattern ? [apiImagePattern] : []),
+    ],
   },
   experimental: {
     agentFeedback: true,
