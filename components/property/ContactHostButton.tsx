@@ -12,7 +12,7 @@ export default function ContactHostButton({
   propertyId,
 }: {
   host: Host;
-  propertyId: string;
+  propertyId: string | number;
 }) {
   const router = useRouter();
   const { user } = useAuthContext();
@@ -30,7 +30,7 @@ export default function ContactHostButton({
     setError("");
 
     try {
-      const threadId = await startConversationWithHost(host, propertyId);
+      const threadId = await startConversationWithHost(host, String(propertyId));
       if (!threadId) {
         setError("Impossible de démarrer la conversation. Réessayez.");
         return;
