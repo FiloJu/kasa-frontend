@@ -173,9 +173,19 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
 
         try {
           const updatedThreads = await apiGetThreads();
-          if (updatedThreads.some((thread) => thread.id === threadId)) {
-            setThreads(updatedThreads);
-          }
+          // Merge backend threads with our new thread, preserving the host data we already have
+          setThreads((current) => {
+            const merged = new Map(
+              current.map((t) => [t.id, t])
+            );
+            updatedThreads.forEach((t) => {
+              // Only update from backend if we don't have otherUser data yet
+              if (!merged.has(t.id) || !merged.get(t.id)!.otherUser?.name) {
+                merged.set(t.id, t);
+              }
+            });
+            return Array.from(merged.values());
+          });
         } catch (refreshError) {
           console.error("Failed to refresh threads after starting a conversation:", refreshError);
         }
