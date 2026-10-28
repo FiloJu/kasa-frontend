@@ -54,15 +54,20 @@ export async function getMessages(threadId: string): Promise<Message[]> {
     `/api/messaging/threads/${threadId}/messages`
   );
   
+  console.log('Raw messages from backend:', rawMessages);
+  
   // Transform backend messages to frontend format
-  return rawMessages.map(msg => ({
-    id: msg.id,
+  const transformed = rawMessages.map((msg, index) => ({
+    id: msg.id || `msg-${index}-${Date.now()}`, // Fallback ID if missing
     threadId,
-    sender: msg.sender || { id: msg.senderId, name: 'Utilisateur' },
+    sender: msg.sender || { id: msg.senderId || 'unknown', name: msg.senderName || 'Utilisateur' },
     content: msg.content || msg.body || '',
     createdAt: msg.createdAt,
     read: msg.read ?? false,
   }));
+  
+  console.log('Transformed messages:', transformed);
+  return transformed;
 }
 
 /**
