@@ -69,7 +69,14 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
      AUTO-LOAD WHEN USER CHANGES
   -------------------------------------------------------- */
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      // Clear favorites when user logs out
+      setFavorites([]);
+      setProperties([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     if (pathname === "/login") return;
     if (authLoading) return;
 
