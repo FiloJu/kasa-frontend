@@ -36,7 +36,20 @@ export async function startConversation(
  * @throws {Error} If the request fails, including when the user is unauthenticated.
  */
 export async function getThreads(): Promise<Thread[]> {
-  return apiFetch<Thread[]>("/api/messaging/threads");
+  const rawThreads = await apiFetch<any[]>("/api/messaging/threads");
+  
+  console.log('Raw threads from backend:', rawThreads);
+  
+  // Transform backend threads to frontend format
+  const transformed = rawThreads.map((thread, index) => ({
+    id: thread.id || `thread-${index}`,
+    otherUser: thread.otherUser || thread.other_user || { id: thread.otherUserId || 'unknown', name: thread.otherUserName || 'Utilisateur' },
+    lastMessage: thread.lastMessage || thread.last_message || '',
+    updatedAt: thread.updatedAt || thread.updated_at || new Date().toISOString(),
+  }));
+  
+  console.log('Transformed threads:', transformed);
+  return transformed;
 }
 
 /**
