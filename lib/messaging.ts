@@ -91,19 +91,38 @@ export async function getMessages(threadId: string): Promise<Message[]> {
     `/api/messaging/threads/${threadId}/messages`
   );
   
-  console.log('Raw messages from backend:', rawMessages);
+  console.log('Raw messages from backend:', JSON.stringify(rawMessages, null, 2));
   
   // Transform backend messages to frontend format
-  const transformed = rawMessages.map((msg, index) => ({
-    id: msg.id || `msg-${index}-${Date.now()}`, // Fallback ID if missing
-    threadId,
-    sender: msg.sender || { id: msg.senderId || 'unknown', name: msg.senderName || 'Utilisateur' },
-    content: msg.content || msg.body || '',
-    createdAt: msg.createdAt,
-    read: msg.read ?? false,
-  }));
+  const transformed = rawMessages.map((msg, index) => {
+    // Parse created_at which comes in format "2026-10-28 07:32:24"
+    let createdAt = new Date().toISOString();
+    if (msg.created_at || msg.createdAt) {
+      const dateStr = msg.created_at || msg.createdAt;
+      // Handle both formats: "2026-10-28 07:32:24" and ISO format
+      const parsed = new Date(dateStr);
+      if (!isNaN(parsed.getTime())) {
+        createdAt = parsed.toISOString();
+      }
+    }
+    
+    const result = {
+      id: msg.id || `msg-${index}-${Date.now()}`,
+      threadId,
+      sender: {
+        id: msg.sender_id || msg.senderId || 'unknown',
+        name: msg.sender_name || msg.senderName || 'Utilisateur',
+        picture: msg.sender_picture || msg.senderPicture || null,
+      },
+      content: msg.content || msg.body || '',
+      createdAt,
+      read: msg.read ?? false,
+    };
+    console.log(`Transformed message ${index}:`, JSON.stringify(result, null, 2));
+    return result;
+  });
   
-  console.log('Transformed messages:', transformed);
+  console.log('Transformed messages:', JSON.stringify(transformed, null, 2));
   return transformed;
 }
 
