@@ -19,7 +19,8 @@ export async function apiFetch<T>(
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("auth_token");
     if (token && !headers.has("Authorization")) {
-      headers.set("Authorization", `Bearer ${token}`);
+      const bearer = "Bearer ";
+      headers.set("Authorization", bearer + token);
     }
   }
 
