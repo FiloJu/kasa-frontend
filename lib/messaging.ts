@@ -50,9 +50,19 @@ export async function getThreads(): Promise<Thread[]> {
  * @throws {Error} If the request fails or the thread cannot be accessed.
  */
 export async function getMessages(threadId: string): Promise<Message[]> {
-  return apiFetch<Message[]>(
+  const rawMessages = await apiFetch<any[]>(
     `/api/messaging/threads/${threadId}/messages`
   );
+  
+  // Transform backend messages to frontend format
+  return rawMessages.map(msg => ({
+    id: msg.id,
+    threadId,
+    sender: msg.sender || { id: msg.senderId, name: 'Utilisateur' },
+    content: msg.content || msg.body || '',
+    createdAt: msg.createdAt,
+    read: msg.read ?? false,
+  }));
 }
 
 /**
