@@ -149,7 +149,7 @@ export default function Messenger() {
                       {thread.otherUser?.name ?? 'Utilisateur'}
                     </span>
                     <span className="text-xs text-gray-dark truncate">
-                      {thread.lastMessage || 'Ouvrir la conversation'}
+                      {String(thread.lastMessage || 'Ouvrir la conversation')}
                     </span>
                   </button>
                 </li>

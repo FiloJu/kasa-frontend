@@ -64,7 +64,9 @@ export async function getThreads(currentUser?: any): Promise<Thread[]> {
     const result = {
       id: thread.id || `thread-${index}`,
       otherUser,
-      lastMessage: thread.lastMessage || '',
+      lastMessage: thread.lastMessage 
+        ? (typeof thread.lastMessage === 'string' ? thread.lastMessage : thread.lastMessage.body || thread.lastMessage.content || '')
+        : '',
       updatedAt: thread.updatedAt || new Date().toISOString(),
     };
     console.log(`Transformed thread ${index}:`, JSON.stringify(result, null, 2));
