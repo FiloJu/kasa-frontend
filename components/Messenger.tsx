@@ -179,21 +179,30 @@ export default function Messenger() {
                 {loading ? (
                   <p className="text-center text-sm text-gray-dark">Chargement…</p>
                 ) : selectedMessages.length > 0 ? (
-                  selectedMessages.map(message => (
-                    <div
-                      key={message.id}
-                      className={`max-w-[75%] px-4 py-2 rounded-[10px] text-sm ${
-                        String(message.sender?.id) === String(user?.id)
-                          ? 'self-end bg-main-red text-white'
-                          : 'self-start bg-gray-100 text-black'
-                      }`}
-                    >
-                      <p>{message.content}</p>
-                      <time className="block text-xs opacity-70 mt-1">
-                        {new Date(message.createdAt).toLocaleString('fr-FR')}
-                      </time>
-                    </div>
-                  ))
+                  selectedMessages.map(message => {
+                    // Ensure message has required fields
+                    if (!message || typeof message !== 'object') return null;
+                    
+                    const content = String(message.content || '(message vide)');
+                    const senderId = String(message.sender?.id || '');
+                    const userId = String(user?.id || '');
+                    
+                    return (
+                      <div
+                        key={message.id}
+                        className={`max-w-[75%] px-4 py-2 rounded-[10px] text-sm ${
+                          senderId === userId
+                            ? 'self-end bg-main-red text-white'
+                            : 'self-start bg-gray-100 text-black'
+                        }`}
+                      >
+                        <p>{content}</p>
+                        <time className="block text-xs opacity-70 mt-1">
+                          {new Date(message.createdAt).toLocaleString('fr-FR')}
+                        </time>
+                      </div>
+                    );
+                  })
                 ) : (
                   <p className="text-center text-sm text-gray-dark">
                     Commencez la conversation en envoyant un message.
