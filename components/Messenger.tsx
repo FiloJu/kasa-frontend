@@ -84,6 +84,12 @@ export default function Messenger() {
 
   const selectedThread = selectedThreadId ? threads.find(t => t.id === selectedThreadId) : null;
   const selectedMessages = selectedThreadId ? getMessages(selectedThreadId) : [];
+  
+  // Debug log to see actual message structure
+  if (selectedMessages.length > 0) {
+    console.log('Messenger selectedMessages:', selectedMessages);
+  }
+  
   let selectedUser = null;
   try {
     selectedUser = selectedThreadId ? getThreadUser(selectedThreadId) : null;
