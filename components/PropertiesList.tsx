@@ -2,6 +2,13 @@ import { getProperties } from "../lib/properties";
 import { Property } from "@/types/property";
 import PropertyCard from "./PropertyCard";
 
+/**
+ * Displays a grid of all available properties as PropertyCard components.
+ * Handles loading errors gracefully by displaying an error message.
+ * This is an async Server Component that fetches properties directly.
+ *
+ * @returns {React.ReactElement} A section containing property cards or an error message.
+ */
 export default async function PropertiesList() {
 
   let properties: Property[] = [];

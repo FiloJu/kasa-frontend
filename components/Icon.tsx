@@ -15,6 +15,9 @@ export type IconName =
   | 'send'
   | 'star'
 
+/**
+ * Props for the Icon component.
+ */
 type IconProps = {
   name: IconName
   size?: number
@@ -22,7 +25,16 @@ type IconProps = {
   className?: string
 }
 
+/**
+ * A utility component for rendering icons.
+ * Handles special rendering for the star icon (as text) and SVG/PNG files from /public/icons/.
+ * The location icon is mapped from local.svg.
+ *
+ * @param {IconProps} props - Component properties.
+ * @returns {React.ReactElement} An image element or span containing the icon.
+ */
 export default function Icon({ name, size = 24, alt = '', className }: IconProps) {
+  // Special case: star is rendered as a Unicode character rather than an image
   if (name === "star") {
     return (
       <span
@@ -36,6 +48,7 @@ export default function Icon({ name, size = 24, alt = '', className }: IconProps
     );
   }
 
+  // Map icon names to file paths; 'send' uses .png, others use .svg; 'location' maps to local.svg
   const iconFile = name === "location" ? "local.svg" : `${name}.${name === "send" ? "png" : "svg"}`;
 
   return (

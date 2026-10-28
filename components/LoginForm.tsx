@@ -5,6 +5,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthContext } from "@/context/AuthContext";
 
+/**
+ * LoginForm component for user authentication.
+ * Handles email/password login with error display.
+ * Redirects to home or returnTo URL on success.
+ *
+ * @returns {React.ReactElement} A form with email, password fields and submit button.
+ */
 export default function LoginForm() {
   const router = useRouter();
   const { login, error: backendError, clearError } = useAuthContext();
@@ -12,7 +19,7 @@ export default function LoginForm() {
   const [submitting, setSubmitting] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
 
-  // Clear error on mount
+  // Clear error on mount to avoid stale errors from previous navigation
   useEffect(() => {
     clearError();
   }, [clearError]);
@@ -28,6 +35,7 @@ export default function LoginForm() {
 
     try {
       await login(email, password);
+      // After successful login, redirect to returnTo URL or home
       const returnTo = new URLSearchParams(window.location.search).get("returnTo");
       const destination = returnTo?.startsWith("/") && !returnTo.startsWith("//")
         ? returnTo
@@ -49,6 +57,7 @@ export default function LoginForm() {
       onSubmit={handleSubmit}
       className="mt-8 w-full max-w-81.5 md:max-w-90 flex flex-col gap-6"
     >
+      {/* Display local or backend errors */}
       {(localError || backendError) && (
         <p className="text-red-600 text-[14px] font-medium text-center">
           {localError || backendError}

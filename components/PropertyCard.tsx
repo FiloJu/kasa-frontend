@@ -5,10 +5,21 @@ import { Property } from "@/types/property";
 import { useAuthContext } from "../context/AuthContext";
 import { useFavoritesContext } from "../context/FavoritesContext";
 
+/**
+ * Props for the PropertyCard component.
+ */
 interface PropertyCardProps {
   property: Property;
 }
 
+/**
+ * A card component displaying a property's key information (image, title, location, price).
+ * Includes a heart button to toggle favorite status (requires user authentication).
+ * Clicking the card navigates to the property detail page.
+ *
+ * @param {PropertyCardProps} props - Component properties.
+ * @returns {React.ReactElement} A clickable card linking to the property detail page.
+ */
 export default function Card({ property }: PropertyCardProps) {
   const favoritesContext = useFavoritesContext();
   const { user } = useAuthContext();
@@ -17,6 +28,7 @@ export default function Card({ property }: PropertyCardProps) {
   const favorite = isFavorite(String(property.id));
 
   const handleFavorite = (e: React.MouseEvent) => {
+    // Prevent the click from navigating to the property detail page
     e.stopPropagation();
     e.preventDefault();
 

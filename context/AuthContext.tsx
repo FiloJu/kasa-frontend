@@ -7,6 +7,9 @@ import type { AuthUser } from "@/types/auth";
 import { apiFetch } from "../lib/api";
 import { login as apiLogin, register as apiRegister } from "@/lib/auth";
 
+/**
+ * Context value type for authentication operations.
+ */
 interface AuthContextType {
   user: AuthUser | null;
   loading: boolean;
@@ -22,6 +25,15 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 export { AuthContext };
 
+/**
+ * AuthProvider component that manages user authentication state.
+ * Stores authenticated user and token in localStorage for persistence.
+ * Automatically restores user session on mount if localStorage contains valid data.
+ *
+ * @param {Object} props - Component props.
+ * @param {React.ReactNode} props.children - Child components.
+ * @returns {React.ReactElement} Provider wrapping child components with auth context.
+ */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
@@ -31,7 +43,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
     /* -------------------------------------------------------
-      Load the current user from /auth/me when an auth cookie is present.
+      Load the current user from localStorage when an auth session exists.
+      This allows users to remain logged in across page refreshes.
     -------------------------------------------------------- */
   const refreshUser = useCallback(async () => {
     try {
@@ -57,6 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 /* -------------------------------------------------------
   Restore the signed-in user once when the provider mounts.
+  Uses queueMicrotask to defer the refresh until after React renders.
 -------------------------------------------------------- */
 useEffect(() => {
   queueMicrotask(() => {
@@ -65,7 +79,8 @@ useEffect(() => {
 }, [refreshUser]);
 
     /* -------------------------------------------------------
-      Sign in and store the authenticated user in context.
+      Sign in and store the authenticated user and token in localStorage.
+      Token is needed for API requests; user data is needed for UI display.
     -------------------------------------------------------- */
   async function login(email: string, password: string) {
     setError(null);
@@ -89,7 +104,7 @@ useEffect(() => {
   }
 
     /* -------------------------------------------------------
-      Register a new account and store the returned user in context.
+      Register a new account and store the returned user and token in localStorage.
     -------------------------------------------------------- */
   async function register(name: string, email: string, password: string) {
     setError(null);
@@ -112,6 +127,15 @@ useEffect(() => {
     }
   }
 
+  /**
+   * Upgrades the current user to an owner role.
+   * Requires re-authenticating with password to verify identity.
+   * Updates the user in context and localStorage on success.
+   *
+   * @async
+   * @param {string} password - User's password for verification.
+   * @throws {Error} If user is not authenticated or upgrade fails.
+   */
   async function upgradeToOwner(password: string) {
     if (!user) throw new Error("Vous devez être connecté pour activer le profil hôte.");
 
@@ -125,9 +149,10 @@ useEffect(() => {
         body: JSON.stringify({ role: "owner" }),
       });
 
+      // Re-authenticate to get a new token with updated permissions
       const refreshedSession = await apiLogin(user.email, password);
       if (refreshedSession.user.role !== "owner" && refreshedSession.user.role !== "admin") {
-        throw new Error("Le profil hôte n’a pas été activé. Contactez l’assistance.");
+        throw new Error("Le profil hôte n'a pas été activé. Contactez l'assistance.");
       }
 
       localStorage.setItem("auth_token", refreshedSession.token);
@@ -136,7 +161,7 @@ useEffect(() => {
     } catch (err: unknown) {
       const message = err instanceof Error
         ? err.message
-        : "Impossible d’activer le profil hôte.";
+        : "Impossible d'activer le profil hôte.";
       setError(message);
       throw new Error(message);
     } finally {
@@ -146,6 +171,7 @@ useEffect(() => {
 
     /* -------------------------------------------------------
       Sign out, clear locally cached user data, and redirect to login.
+      Removes auth token, user info, and any cached messaging/messaging data.
     -------------------------------------------------------- */
   async function logout() {
     setLoading(true);
@@ -169,6 +195,9 @@ useEffect(() => {
     queueMicrotask(() => setLoading(false));
   }
 
+  /**
+   * Clears the current error message.
+   */
   function clearError() {
     setError(null);
   }
@@ -192,6 +221,12 @@ useEffect(() => {
   );
 }
 
+/**
+ * Hook to access the authentication context.
+ *
+ * @returns {AuthContextType} The auth context value.
+ * @throws {Error} If used outside AuthProvider.
+ */
 export function useAuthContext() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuthContext must be used within AuthProvider");

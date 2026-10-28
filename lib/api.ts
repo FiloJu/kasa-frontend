@@ -1,5 +1,18 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+/**
+ * Generic API fetch wrapper that handles authorization and error handling.
+ * Automatically adds the Bearer token from localStorage if available.
+ * For server-side calls, uses the API_URL environment variable.
+ *
+ * @async
+ * @template T - The expected response data type.
+ * @function apiFetch
+ * @param {string} endpoint - API endpoint path (e.g., '/api/properties').
+ * @param {RequestInit} [options] - Optional fetch configuration (headers, method, body, etc.).
+ * @returns {Promise<T>} Parsed JSON response of type T.
+ * @throws {Error} If the request fails; includes status and parsed error message from API.
+ */
 export async function apiFetch<T>(
   endpoint: string,
   options?: RequestInit

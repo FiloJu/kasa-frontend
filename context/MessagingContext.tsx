@@ -24,6 +24,15 @@ import {
 
 const MessagingContext = createContext<MessagingContextType | null>(null);
 
+/**
+ * MessagingProvider component that manages conversation state.
+ * Loads threads on authentication, provides methods to fetch/send messages.
+ * Handles unread count calculation and message caching.
+ *
+ * @param {Object} props - Component props.
+ * @param {React.ReactNode} props.children - Child components.
+ * @returns {React.ReactElement} Provider wrapping child components with messaging context.
+ */
 export function MessagingProvider({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuthContext();
   const pathname = usePathname();
@@ -34,7 +43,9 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
   const [messages, setMessages] = useState<Message[]>([]);
 
   /* -------------------------------------------------------
-     1) Load conversation threads when the authenticated user changes.
+     1) LOAD CONVERSATION THREADS
+     Loads all conversation threads when the authenticated user changes.
+     Skips messaging on login page and waits for auth to resolve.
   -------------------------------------------------------- */
   useEffect(() => {
     // Skip messaging requests on the login page.
@@ -81,7 +92,9 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
   }, [user, authLoading, pathname]);
 
     /* -------------------------------------------------------
-      2) Load a thread's messages and replace any cached messages for it.
+      2) LOAD MESSAGES FOR THREAD
+      Fetches messages for a specific thread and caches them.
+      Replaces any previously cached messages for that thread.
     -------------------------------------------------------- */
   const loadMessagesForThread = useCallback(
     async (threadId: string): Promise<void> => {
@@ -95,6 +108,7 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
 
         queueMicrotask(() => {
           setMessages((prev) => {
+            // Remove cached messages for this thread and add fresh ones
             const filtered = prev.filter((m) => m.threadId !== threadId);
             return [...filtered, ...data];
           });
@@ -107,7 +121,9 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
   );
 
     /* -------------------------------------------------------
-      3) Count threads updated since their last-seen timestamp in local storage.
+      3) COUNT UNREAD THREADS
+      Compares each thread's updatedAt timestamp with lastSeen timestamp in localStorage.
+      A thread is considered unread if it was updated after lastSeen.
     -------------------------------------------------------- */
   const unreadCount = useMemo(() => {
     return threads.filter((t) => {
@@ -118,7 +134,8 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
   }, [threads]);
 
     /* -------------------------------------------------------
-      4) Return the messages currently cached for a thread.
+      4) GET CACHED MESSAGES FOR THREAD
+      Returns all cached messages belonging to a specific thread.
     -------------------------------------------------------- */
   const getMessages = useCallback(
     (threadId: string) => messages.filter((m) => m.threadId === threadId),
@@ -126,7 +143,9 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
   );
 
     /* -------------------------------------------------------
-      5) Return the other participant in a thread, or throw if it is not loaded.
+      5) GET OTHER PARTICIPANT IN THREAD
+      Returns the other user in a thread (not the current user).
+      Throws if the thread ID is not found.
     -------------------------------------------------------- */
   const getThreadUser = useCallback(
     (threadId: string): UserPublic | Host => {
@@ -138,7 +157,10 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
   );
 
     /* -------------------------------------------------------
-      6) Start a conversation, then refresh its thread and message data.
+      6) START CONVERSATION WITH HOST
+      Creates a new conversation thread or opens an existing one.
+      Optimistically adds the thread to state, then syncs with backend.
+      Fetches messages for the new thread.
     -------------------------------------------------------- */
   const startConversationWithHost = useCallback(
     async (
@@ -146,7 +168,6 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
       propertyId: string,
       suggestedMessage?: string
     ): Promise<string | undefined> => {
-      console.log("startConversationWithHost called with:", { propertyId, hostId: host.id, suggestedMessage });
       
       // Do not start a conversation from the login page.
       if (pathname === "/login") return;
@@ -154,12 +175,14 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
       if (!user) return;
 
       try {
+        // Create the conversation and get the thread ID
         const { threadId } = await startConversation(
           propertyId,
           String(host.id),
           suggestedMessage ?? ""
         );
 
+        // Optimistically add the new thread to state with the host data we already have
         const newThread: Thread = {
           id: threadId,
           otherUser: host,
@@ -172,6 +195,7 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
         ]);
 
         try {
+          // Refresh threads from backend to get the most up-to-date data
           const updatedThreads = await apiGetThreads(user);
           // Merge backend threads with our new thread, preserving the host data we already have
           setThreads((current) => {
@@ -190,6 +214,7 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
           console.error("Failed to refresh threads after starting a conversation:", refreshError);
         }
 
+        // Fetch messages for the new thread
         await loadMessagesForThread(threadId);
 
         return threadId;
@@ -202,7 +227,9 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
   );
 
     /* -------------------------------------------------------
-      7) Send a message, then refresh the thread and its messages.
+      7) SEND MESSAGE TO THREAD
+      Sends a message to a conversation thread.
+      Refreshes thread and message data after sending.
     -------------------------------------------------------- */
   const sendMessage = useCallback(
     async (threadId: string, content: string): Promise<void> => {
@@ -214,8 +241,10 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
       try {
         await apiSendMessage(threadId, content);
 
+        // Refresh messages to include the newly sent message
         await loadMessagesForThread(threadId);
 
+        // Refresh threads to update lastMessage timestamp
         const updatedThreads = await apiGetThreads(user);
         queueMicrotask(() => setThreads(updatedThreads));
       } catch (err) {
@@ -227,7 +256,9 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
   );
 
     /* -------------------------------------------------------
-      8) Expose empty safe defaults when signed out and live data when signed in.
+      8) CONTEXT VALUE
+      Provides safe defaults when signed out and live data when signed in.
+      Memoized to prevent unnecessary re-renders.
     -------------------------------------------------------- */
   const value = useMemo<MessagingContextType>(() => {
     if (!user) {
@@ -282,6 +313,12 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Hook to access the messaging context.
+ *
+ * @returns {MessagingContextType} The messaging context value.
+ * @throws {Error} If used outside MessagingProvider.
+ */
 export function useMessaging() {
   const ctx = useContext(MessagingContext);
   if (!ctx)

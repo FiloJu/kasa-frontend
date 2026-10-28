@@ -14,6 +14,9 @@ import { useAuthContext } from "./AuthContext";
 import { getFavorites, toggleFavorite } from "@/lib/favorites";
 import { Property } from "@/types/property";
 
+/**
+ * Context value type for favorites management.
+ */
 interface FavoritesContextType {
   favorites: string[];
   properties: Property[];
@@ -27,6 +30,15 @@ interface FavoritesContextType {
 const FavoritesContext = createContext<FavoritesContextType | null>(null);
 export { FavoritesContext };
 
+/**
+ * FavoritesProvider component that manages the user's favorite properties.
+ * Fetches favorites from the API and caches them in context.
+ * Provides optimistic UI updates with rollback on error.
+ *
+ * @param {Object} props - Component props.
+ * @param {React.ReactNode} props.children - Child components.
+ * @returns {React.ReactElement} Provider wrapping child components with favorites context.
+ */
 export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuthContext();
   const pathname = usePathname();
@@ -38,6 +50,8 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
   /* -------------------------------------------------------
      FETCH FAVORITES + PROPERTIES
+     Retrieves the user's favorite properties from the API.
+     Uses queueMicrotask to batch state updates.
   -------------------------------------------------------- */
   const refreshFavorites = useCallback(async () => {
     if (!user) return;
@@ -67,6 +81,8 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
   /* -------------------------------------------------------
      AUTO-LOAD WHEN USER CHANGES
+     Fetches favorites whenever the authenticated user changes.
+     Clears favorites when user logs out.
   -------------------------------------------------------- */
   useEffect(() => {
     if (!user) {
@@ -87,6 +103,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
   /* -------------------------------------------------------
      CHECK FAVORITE STATUS
+     Returns true if a property ID is in the favorites list.
   -------------------------------------------------------- */
   const isFavorite = useCallback(
     (propertyId: string) => favorites.includes(propertyId),
@@ -95,6 +112,8 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
   /* -------------------------------------------------------
      TOGGLE FAVORITE
+     Optimistically updates the UI immediately, then syncs with the API.
+     Rolls back if the API call fails.
   -------------------------------------------------------- */
   const toggle = useCallback(
     async (propertyId: string) => {
@@ -102,6 +121,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
       const currentlyFavorite = favorites.includes(propertyId);
 
+      // Optimistic update: immediately reflect the change in the UI
       setFavorites((prev) =>
         currentlyFavorite
           ? prev.filter((id) => id !== propertyId)
@@ -112,7 +132,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         await toggleFavorite(propertyId, currentlyFavorite, String(user.id));
         refreshFavorites();
       } catch {
-        // rollback
+        // Rollback on error: revert to the previous state
         setFavorites((prev) =>
           currentlyFavorite
             ? [...prev, propertyId]
@@ -144,6 +164,12 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Hook to access the favorites context.
+ *
+ * @returns {FavoritesContextType} The favorites context value.
+ * @throws {Error} If used outside FavoritesProvider.
+ */
 export function useFavoritesContext() {
   const ctx = useContext(FavoritesContext);
   if (!ctx)
