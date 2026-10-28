@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -8,9 +8,14 @@ import { useAuthContext } from "@/context/AuthContext";
 
 export default function SigninForm() {
 	const router = useRouter();
-	const { register, error: backendError } = useAuthContext();
+	const { register, error: backendError, clearError } = useAuthContext();
 	const [submitting, setSubmitting] = useState(false);
 	const [localError, setLocalError] = useState<string | null>(null);
+
+	// Clear error on mount
+	useEffect(() => {
+		clearError();
+	}, [clearError]);
 
 	function validatePassword(password: string): string | null {
 		if (password.length < 8) {
@@ -142,12 +147,12 @@ export default function SigninForm() {
 					className="mt-0.5 h-3 w-3 accent-main-red"
 				/>
 				<span>
-					J’accepte les{" "}
+					J'accepte les{" "}
 					<a
 						href="/conditions-generales"
 						className="underline underline-offset-2 hover:text-dark-orange"
 					>
-						conditions générales d’utilisation
+						conditions générales d'utilisation
 					</a>
 				</span>
 			</label>

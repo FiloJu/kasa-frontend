@@ -1,16 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthContext } from "@/context/AuthContext";
 
 export default function LoginForm() {
   const router = useRouter();
-  const { login, error: backendError } = useAuthContext();
+  const { login, error: backendError, clearError } = useAuthContext();
 
   const [submitting, setSubmitting] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+
+  // Clear error on mount
+  useEffect(() => {
+    clearError();
+  }, [clearError]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

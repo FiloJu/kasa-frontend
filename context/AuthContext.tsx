@@ -16,6 +16,7 @@ interface AuthContextType {
   upgradeToOwner: (password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  clearError: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -168,6 +169,10 @@ useEffect(() => {
     queueMicrotask(() => setLoading(false));
   }
 
+  function clearError() {
+    setError(null);
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -179,6 +184,7 @@ useEffect(() => {
         upgradeToOwner,
         logout,
         refreshUser,
+        clearError,
       }}
     >
       {children}
