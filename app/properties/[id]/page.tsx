@@ -162,7 +162,6 @@ export default async function PropertyPage({ params }: Props) {
 									fill
 									sizes="64px"
 									className="object-cover"
-									unoptimized
 								/>
 							) : (
 								<span className="flex h-full items-center justify-center text-xl font-semibold text-[#99331A]">

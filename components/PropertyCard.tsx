@@ -54,11 +54,9 @@ export default function Card({ property }: PropertyCardProps) {
             src={property.cover}
             alt={property.title}
             fill
-            priority          
-            loading="eager"  
+            loading="lazy"
             sizes="(max-width: 768px) 100vw, 355px"
             className="object-cover rounded-t-10"
-            unoptimized
           />
 
           {/* FAVORITES BUTTON */}

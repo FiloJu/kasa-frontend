@@ -33,6 +33,7 @@ export default function AboutPage() {
           src="/assets/hero-a-propos.png"
           alt="Maison en bois avec terrasse entourée de verdure"
           fill
+          sizes="(max-width: 768px) 100vw, 1152px"
           className="object-cover"
         />
       </div>
@@ -55,6 +56,7 @@ export default function AboutPage() {
               src="/assets/content-a-propos.png"
               alt="Chalet avec toit triangulaire illuminé au crépuscule"
               fill
+              sizes="(max-width: 1023px) 100vw, 380px"
               className="object-cover"
             />
           </div>
@@ -70,6 +72,7 @@ export default function AboutPage() {
             src="/assets/content-a-propos.png"
             alt="Chalet avec toit triangulaire illuminé au crépuscule"
             fill
+            sizes="380px"
             className="object-cover"
           />
         </div>

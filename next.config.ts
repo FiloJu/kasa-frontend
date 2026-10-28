@@ -1,22 +1,38 @@
 import type { NextConfig } from "next";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiImagePattern = apiUrl
+  ? (() => {
+      const { protocol, hostname, port } = new URL(apiUrl);
+      return {
+        protocol: protocol.slice(0, -1) as "http" | "https",
+        hostname,
+        port,
+        pathname: "/**",
+      };
+    })()
+  : null;
+
 const nextConfig: NextConfig = {
   /* config options here */
   async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
+    const configuredApiUrl = apiUrl?.replace(/\/+$/, "");
 
-    if (!apiUrl) return [];
+    if (!configuredApiUrl) return [];
 
     return [
       {
         source: "/api/:path*",
-        destination: `${apiUrl}/api/:path*`,
+        destination: `${configuredApiUrl}/api/:path*`,
       },
       {
         source: "/auth/:path*",
-        destination: `${apiUrl}/auth/:path*`,
+        destination: `${configuredApiUrl}/auth/:path*`,
       },
     ];
+  },
+  images: {
+    remotePatterns: apiImagePattern ? [apiImagePattern] : [],
   },
   experimental: {
     agentFeedback: true,

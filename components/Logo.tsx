@@ -15,7 +15,6 @@ export default function Logo({ className = "", variant = "default", size = "larg
           src="/assets/logo-picto.svg"
           alt="Kasa Picto Logo"
           fill
-          priority
           className="object-contain"
         />
       </div>

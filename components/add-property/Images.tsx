@@ -143,7 +143,6 @@ export default function Images({
                 width={200}
                 height={120}
                 className="w-full h-full object-cover"
-                unoptimized
               />
 
               <button
@@ -209,7 +208,6 @@ export default function Images({
                   width={80}
                   height={80}
                   className="w-full h-full object-cover"
-                  unoptimized
                 />
 
                 <button

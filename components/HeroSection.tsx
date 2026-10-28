@@ -23,8 +23,9 @@ export default function HeroSection() {
           src="/assets/hero-home.png"
           alt="Illustration d'un paysage accueillant représentant le confort et le voyage"
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1115px"
           className="object-cover rounded-20"
-          priority
+          preload
         />
       </div>
     </section>

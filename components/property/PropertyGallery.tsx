@@ -53,10 +53,9 @@ export default function PropertyGallery({
               src={image}
               alt={`${title}, photo ${index + 1}`}
               fill
-              priority={index === 0}
+              preload={index === 0}
               sizes={index === 0 ? "(max-width: 768px) 100vw, 66vw" : "(max-width: 768px) 50vw, 25vw"}
               className="object-cover transition-transform duration-300 hover:scale-[1.02]"
-              unoptimized
             />
           </button>
         ))}
@@ -95,7 +94,6 @@ export default function PropertyGallery({
               fill
               sizes="100vw"
               className="object-contain"
-              unoptimized
             />
           </div>
           <button

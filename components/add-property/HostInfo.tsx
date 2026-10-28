@@ -24,7 +24,6 @@ export default function HostInfo() {
             alt={`Photo de profil de ${user.name}`}
             width={56}
             height={56}
-            unoptimized
             className="h-14 w-14 rounded-full object-cover"
           />
         ) : (
