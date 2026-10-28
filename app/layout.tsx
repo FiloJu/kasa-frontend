@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
 import { FavoritesProvider } from "@/context/FavoritesContext";
 import { MessagingProvider } from "@/context/MessagingContext";
+import { serializeJsonLd, SITE_URL } from "@/lib/seo";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -16,6 +17,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: 'Kasa — Location entre particuliers',
     template: '%s | Kasa',
@@ -30,13 +32,47 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'fr_FR',
     siteName: 'Kasa',
+    images: [
+      {
+        url: '/assets/hero-home.png',
+        width: 1200,
+        height: 630,
+        alt: 'Kasa — Trouvez votre logement idéal',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['/assets/hero-home.png'],
   },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const siteSchema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        name: 'Kasa',
+        url: SITE_URL,
+        inLanguage: 'fr-FR',
+      },
+      {
+        '@type': 'Organization',
+        name: 'Kasa',
+        url: SITE_URL,
+        logo: `${SITE_URL}/assets/logo-picto.svg`,
+      },
+    ],
+  };
+
   return (
     <html lang="fr" className={inter.variable}>
       <body className="min-h-screen flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(siteSchema) }}
+        />
         <Suspense fallback={null}>
           <AuthProvider>
             <FavoritesProvider>

@@ -4,6 +4,9 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: 'À propos',
   description: 'Découvrez la mission de Kasa, plateforme de location entre particuliers en France.',
+  alternates: {
+    canonical: '/about',
+  },
 }
 
 export default function AboutPage() {

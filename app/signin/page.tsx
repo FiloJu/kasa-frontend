@@ -1,4 +1,18 @@
+import type { Metadata } from "next";
 import RegisterForm from "../../components/SigninForm";
+
+export const metadata: Metadata = {
+  title: "Créer un compte",
+  description:
+    "Rejoignez la communauté Kasa et commencez à découvrir des logements uniques partout en France.",
+  alternates: {
+    canonical: "/signin",
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default function SigninPage() {
   return (

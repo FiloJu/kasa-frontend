@@ -50,6 +50,7 @@ pnpm install
 Créez un fichier `.env.local` à la racine du projet :
 ```
 NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 Pour le développement local, assurez-vous que le backend est en cours d'exécution sur le port 3001.
@@ -116,6 +117,8 @@ L'application est déployée sur **Vercel** et se met à jour automatiquement à
 ### URL de production
 - Frontend : https://kasa-three-xi.vercel.app
 - Backend : https://kasa-backend-mauve.vercel.app
+
+Configurez `NEXT_PUBLIC_SITE_URL` dans l’environnement de déploiement avec l’URL publique du frontend. Cette valeur est utilisée pour les URL canoniques, les données structurées Schema.org et le sitemap. À défaut, l’application utilise l’URL de production ci-dessus.
 
 **Note** : En production sur Vercel, l'application utilise des données mock (mock-properties.json et mock-auth-users.json) pour les propriétés et l'authentification. Les favoris sont persistés en localStorage.
 

@@ -4,6 +4,10 @@ import Messenger from '@/components/Messenger'
 
 export const metadata: Metadata = {
   title: 'Messagerie',
+  robots: {
+    index: false,
+    follow: false,
+  },
 }
 
 export default function MessagesPage() {

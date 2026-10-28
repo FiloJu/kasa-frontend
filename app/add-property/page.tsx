@@ -4,6 +4,10 @@ import AddPropertyContent from '@/components/add-property/AddPropertyContent'
 export const metadata: Metadata = {
   title: 'Ajouter un logement',
   description: 'Votre compte doit être validé par la communauté Kasa avant de pouvoir publier une annonce.',
+  robots: {
+    index: false,
+    follow: false,
+  },
 }
 
 export default function AddPropertyPage() {

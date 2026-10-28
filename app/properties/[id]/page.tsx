@@ -6,17 +6,19 @@ import Icon from '@/components/Icon'
 import ContactHostButton from '@/components/property/ContactHostButton'
 import PropertyGallery from '@/components/property/PropertyGallery'
 import { getPropertyById } from '@/lib/properties'
+import { serializeJsonLd, SITE_URL } from '@/lib/seo'
 
 type Props = { params: Promise<{ id: string }> }
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kasa.fr'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { id } = await params
 	const property = await getPropertyById(id).catch(() => null)
 
 	if (!property) {
-		return { title: 'Logement introuvable' }
+		return {
+			title: 'Logement introuvable',
+			robots: { index: false, follow: false },
+		}
 	}
 
 	const pictures = property.pictures?.length ? property.pictures : [property.cover]
@@ -72,10 +74,15 @@ export default async function PropertyPage({ params }: Props) {
 				ratingCount: property.ratings_count,
 			},
 		}),
-		host: {
+		owner: {
 			'@type': 'Person',
 			name: property.host.name,
 			image: property.host.picture,
+		},
+		offers: {
+			'@type': 'Offer',
+			price: property.price_per_night,
+			priceCurrency: 'EUR',
 		},
 	}
 
@@ -83,7 +90,7 @@ export default async function PropertyPage({ params }: Props) {
 		<article className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 pb-12 pt-6 md:px-8 md:pt-10">
 			<script
 				type="application/ld+json"
-				dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
+				dangerouslySetInnerHTML={{ __html: serializeJsonLd(schemaOrg) }}
 			/>
 
 			<div className="flex flex-wrap items-center justify-between gap-4">
