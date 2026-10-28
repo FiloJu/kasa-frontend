@@ -21,6 +21,7 @@ export async function startConversation(
   console.log("Starting conversation with payload:", payload);
   return apiFetch("/api/messaging/start", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 }
@@ -71,6 +72,7 @@ export async function sendMessage(
 ): Promise<{ ok: boolean }> {
   return apiFetch(`/api/messaging/threads/${threadId}/messages`, {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ content }),
   });
 }
