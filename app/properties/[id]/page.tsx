@@ -1,37 +1,26 @@
-import type { Metadata } from "next";
-import Image from "next/image";
-import { notFound } from "next/navigation";
+import type { Metadata } from 'next'
+import Image from 'next/image'
+import { notFound } from 'next/navigation'
+import Button from '@/components/Button'
+import Icon from '@/components/Icon'
+import ContactHostButton from '@/components/property/ContactHostButton'
+import PropertyGallery from '@/components/property/PropertyGallery'
+import { getPropertyById } from '@/lib/properties'
 
-import Button from "@/components/Button";
-import Icon from "@/components/Icon";
-import ContactHostButton from "@/components/property/ContactHostButton";
-import PropertyGallery from "@/components/property/PropertyGallery";
-import { getPropertyById } from "@/lib/properties";
+type Props = { params: Promise<{ id: string }> }
 
-type PageProps = {
-	params: Promise<{ id: string }>;
-};
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kasa.fr'
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kasa.fr";
-
-async function loadProperty(id: string) {
-	try {
-		return await getPropertyById(id);
-	} catch {
-		return null;
-	}
-}
-
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-	const { id } = await params;
-	const property = await loadProperty(id);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+	const { id } = await params
+	const property = await getPropertyById(id).catch(() => null)
 
 	if (!property) {
-		return { title: "Logement introuvable" };
+		return { title: 'Logement introuvable' }
 	}
 
-	const pictures = property.pictures?.length ? property.pictures : [property.cover];
-	const canonicalUrl = `${siteUrl}/properties/${property.id}`;
+	const pictures = property.pictures?.length ? property.pictures : [property.cover]
+	const canonicalUrl = `${SITE_URL}/properties/${property.id}`
 
 	return {
 		title: property.title,
@@ -41,61 +30,60 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 			title: property.title,
 			description: property.description,
 			url: canonicalUrl,
-			siteName: "Kasa",
+			siteName: 'Kasa',
 			images: pictures,
-			locale: "fr_FR",
-			type: "article",
+			locale: 'fr_FR',
+			type: 'article',
 		},
 		twitter: {
-			card: "summary_large_image",
+			card: 'summary_large_image',
 			title: property.title,
 			description: property.description,
 			images: pictures,
 		},
-	};
+	}
 }
 
-export default async function PropertyPage({ params }: PageProps) {
-	const { id } = await params;
-	const property = await loadProperty(id);
+export default async function PropertyPage({ params }: Props) {
+	const { id } = await params
+	const property = await getPropertyById(id).catch(() => null)
 
-	if (!property) notFound();
+	if (!property) notFound()
 
-	const pictures = property.pictures?.length ? property.pictures : [property.cover];
-	const propertyUrl = `${siteUrl}/properties/${property.id}`;
-	const schema = {
-		"@context": "https://schema.org",
-		"@type": "LodgingBusiness",
+	const pictures = property.pictures?.length ? property.pictures : [property.cover]
+	const propertyUrl = `${SITE_URL}/properties/${property.id}`
+	const schemaOrg = {
+		'@context': 'https://schema.org',
+		'@type': 'LodgingBusiness',
 		name: property.title,
 		description: property.description,
 		image: pictures,
 		url: propertyUrl,
 		address: {
-			"@type": "PostalAddress",
+			'@type': 'PostalAddress',
 			addressLocality: property.location,
-			addressCountry: "FR",
+			addressCountry: 'FR',
 		},
 		...(property.ratings_count > 0 && {
 			aggregateRating: {
-				"@type": "AggregateRating",
+				'@type': 'AggregateRating',
 				ratingValue: property.rating_avg,
 				bestRating: 5,
 				ratingCount: property.ratings_count,
 			},
 		}),
 		host: {
-			"@type": "Person",
+			'@type': 'Person',
 			name: property.host.name,
 			image: property.host.picture,
 		},
-	};
-	const schemaJson = JSON.stringify(schema).replace(/</g, "\\u003c");
+	}
 
 	return (
 		<article className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 pb-12 pt-6 md:px-8 md:pt-10">
 			<script
 				type="application/ld+json"
-				dangerouslySetInnerHTML={{ __html: schemaJson }}
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
 			/>
 
 			<div className="flex flex-wrap items-center justify-between gap-4">

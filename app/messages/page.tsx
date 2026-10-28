@@ -1,7 +1,15 @@
-'use client';
+import type { Metadata } from 'next'
+import { Suspense } from 'react'
+import Messenger from '@/components/Messenger'
 
-import Messenger from '@/components/Messenger';
+export const metadata: Metadata = {
+  title: 'Messagerie',
+}
 
 export default function MessagesPage() {
-  return <Messenger />;
+  return (
+    <Suspense>
+      <Messenger />
+    </Suspense>
+  )
 }
