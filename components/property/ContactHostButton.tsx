@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { useAuthContext } from "@/context/AuthContext";
-import { useMessaging } from "@/context/MessagingContext";
 import type { Host } from "@/types/property";
 
 export default function ContactHostButton({
@@ -16,7 +15,7 @@ export default function ContactHostButton({
 }) {
   const router = useRouter();
   const { user } = useAuthContext();
-  const { startConversationWithHost } = useMessaging();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -30,12 +29,9 @@ export default function ContactHostButton({
     setError("");
 
     try {
-      const threadId = await startConversationWithHost(host, String(propertyId));
-      if (!threadId) {
-        setError("Impossible de démarrer la conversation. Réessayez.");
-        return;
-      }
-      router.push(`/messages?threadId=${encodeURIComponent(threadId)}`);
+      // Redirect to messenger with propertyId as query param
+      // The Messenger component will handle creating/opening the conversation
+      router.push(`/messages?propertyId=${encodeURIComponent(String(propertyId))}`);
     } catch (contactError) {
       setError(
         contactError instanceof Error
