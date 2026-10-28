@@ -121,7 +121,7 @@ export default function MessagesPage() {
 										className={`flex w-full flex-col gap-1 border-b border-gray-light px-5 py-4 text-left transition-colors hover:bg-[#FFFBF9] ${thread.id === selectedThreadId ? "bg-[#FFFBF9]" : "bg-white"}`}
 									>
 										<span className="text-sm font-medium text-black">
-											{thread.otherUser.name}
+											{thread.otherUser?.name ?? "Utilisateur"}
 										</span>
 										<span className="line-clamp-2 text-xs text-gray-dark">
 											{thread.lastMessage || "Ouvrir la conversation"}
@@ -147,7 +147,7 @@ export default function MessagesPage() {
 								>
 									Retour
 								</button>
-								<h2 className="text-sm font-semibold text-black">{selectedUser.name}</h2>
+								<h2 className="text-sm font-semibold text-black">{selectedUser?.name ?? "Utilisateur"}</h2>
 							</div>
 
 							<div className="flex flex-1 flex-col gap-3 overflow-y-auto p-5">
@@ -155,7 +155,7 @@ export default function MessagesPage() {
 									selectedMessages.map((message) => (
 										<div
 											key={message.id}
-											className={`max-w-[85%] rounded-[10px] px-4 py-3 text-sm text-black ${String(message.sender.id) === String(user.id) ? "self-end bg-[#FFFBF9]" : "self-start bg-gray-100"}`}
+											className={`max-w-[85%] rounded-[10px] px-4 py-3 text-sm text-black ${String(message.sender?.id) === String(user.id) ? "self-end bg-[#FFFBF9]" : "self-start bg-gray-100"}`}
 										>
 											<p>{message.content}</p>
 											<time className="mt-2 block text-[11px] text-gray-dark">
