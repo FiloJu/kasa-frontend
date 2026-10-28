@@ -32,23 +32,45 @@ export async function startConversation(
  *
  * @async
  * @function getThreads
+ * @param {any} currentUser - Current authenticated user to determine otherUser
  * @returns {Promise<Thread[]>} The user's conversation threads.
  * @throws {Error} If the request fails, including when the user is unauthenticated.
  */
-export async function getThreads(): Promise<Thread[]> {
+export async function getThreads(currentUser?: any): Promise<Thread[]> {
   const rawThreads = await apiFetch<any[]>("/api/messaging/threads");
   
-  console.log('Raw threads from backend:', rawThreads);
+  console.log('Raw threads from backend:', JSON.stringify(rawThreads, null, 2));
   
   // Transform backend threads to frontend format
-  const transformed = rawThreads.map((thread, index) => ({
-    id: thread.id || `thread-${index}`,
-    otherUser: thread.otherUser || thread.other_user || { id: thread.otherUserId || 'unknown', name: thread.otherUserName || 'Utilisateur' },
-    lastMessage: thread.lastMessage || thread.last_message || '',
-    updatedAt: thread.updatedAt || thread.updated_at || new Date().toISOString(),
-  }));
+  const transformed = rawThreads.map((thread, index) => {
+    // Determine who is the other user based on current user
+    let otherUser: any = { id: 'unknown', name: 'Utilisateur', picture: null };
+    
+    if (thread.participants) {
+      const { client, owner } = thread.participants;
+      const currentUserId = currentUser?.id;
+      
+      // If current user is the client, other user is owner; otherwise other user is client
+      if (currentUserId === client?.id) {
+        otherUser = owner || { id: 'unknown', name: 'Utilisateur', picture: null };
+      } else if (currentUserId === owner?.id) {
+        otherUser = client || { id: 'unknown', name: 'Utilisateur', picture: null };
+      } else {
+        // Fallback: use owner if we can't determine
+        otherUser = owner || client || { id: 'unknown', name: 'Utilisateur', picture: null };
+      }
+    }
+    
+    const result = {
+      id: thread.id || `thread-${index}`,
+      otherUser,
+      lastMessage: thread.lastMessage || '',
+      updatedAt: thread.updatedAt || new Date().toISOString(),
+    };
+    console.log(`Transformed thread ${index}:`, JSON.stringify(result, null, 2));
+    return result;
+  });
   
-  console.log('Transformed threads:', transformed);
   return transformed;
 }
 

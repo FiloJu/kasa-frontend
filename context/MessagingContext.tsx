@@ -62,7 +62,7 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
       setThreadsError(null);
 
       try {
-        const data = await apiGetThreads();
+        const data = await apiGetThreads(user);
         if (!cancelled) setThreads(data);
       } catch (err) {
         console.error("Failed to load threads:", err);
@@ -172,7 +172,7 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
         ]);
 
         try {
-          const updatedThreads = await apiGetThreads();
+          const updatedThreads = await apiGetThreads(user);
           // Merge backend threads with our new thread, preserving the host data we already have
           setThreads((current) => {
             const merged = new Map(
@@ -216,7 +216,7 @@ export function MessagingProvider({ children }: { children: React.ReactNode }) {
 
         await loadMessagesForThread(threadId);
 
-        const updatedThreads = await apiGetThreads();
+        const updatedThreads = await apiGetThreads(user);
         queueMicrotask(() => setThreads(updatedThreads));
       } catch (err) {
         console.error("Failed to send message:", err);
