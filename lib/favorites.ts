@@ -25,17 +25,18 @@ export async function getFavorites(userId: string): Promise<Property[]> {
  * @function toggleFavorite
  * @param {string} propertyId - Identifier of the property to update.
  * @param {boolean} isFavorite - Whether the property is currently saved as a favorite.
- * @returns {Promise<{ success: boolean }>} The API result, or `false` when the property ID is missing.
+ * @returns {Promise<void>} Resolves when the API accepts the update.
  * @throws {Error} If the API request fails.
  */
 export async function toggleFavorite(
   propertyId: string,
-  isFavorite: boolean,
-  userId?: string
-): Promise<{ success: boolean }> {
-  if (!propertyId) return { success: false };
+  isFavorite: boolean
+): Promise<void> {
+  if (!propertyId) {
+    throw new Error("L’identifiant du logement est requis pour modifier les favoris.");
+  }
 
-  return apiFetch(`/api/properties/${propertyId}/favorite`, {
+  await apiFetch<void>(`/api/properties/${propertyId}/favorite`, {
     method: isFavorite ? "DELETE" : "POST",
   });
 }
