@@ -1,6 +1,7 @@
 import React from "react";
 import Logo from "./Logo";
 
+/** Renders the site footer with the brand mark and copyright notice. */
 export default function Footer() {
   return (
     <footer className="w-full bg-white border-t border-[#f5f5f5] px-[40px] py-[8px]">

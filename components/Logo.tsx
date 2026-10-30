@@ -1,12 +1,19 @@
 import React from "react";
 import Image from "next/image";
 
+/** Configuration options for the responsive Kasa logo. */
 type LogoProps = {
   className?: string;
   variant?: "default" | "picto";
   size?: "small" | "large";
 };
 
+/**
+ * Renders the full Kasa wordmark or its compact pictogram.
+ *
+ * @param props - Logo appearance options.
+ * @returns The selected logo variant.
+ */
 export default function Logo({ className = "", variant = "default", size = "large" }: LogoProps) {
   if (variant === "picto") {
     return (

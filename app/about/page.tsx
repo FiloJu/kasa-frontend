@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Metadata } from "next";
 
+/** Search and social metadata for the about page. */
 export const metadata: Metadata = {
   title: 'À propos',
   description: 'Découvrez la mission de Kasa, plateforme de location entre particuliers en France.',
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
   },
 }
 
+/** Renders Kasa's mission and introduction. */
 export default function AboutPage() {
   return (
     <div className="flex flex-col gap-8 md:gap-10 px-4 md:px-8 lg:px-0 pb-10 max-w-6xl mx-auto">

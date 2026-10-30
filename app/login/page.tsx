@@ -1,6 +1,7 @@
 "use client";
 import LoginForm from "@/components/LoginForm";
 
+/** Renders the sign-in page and its authentication form. */
 export default function LoginPage() {
   return (
     <section className="w-full flex justify-center items-center mb-14 mt-14 ">

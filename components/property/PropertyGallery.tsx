@@ -3,6 +3,12 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
+/**
+ * Displays property photos and an interactive full-screen gallery.
+ *
+ * @param props.images - Image URLs to display.
+ * @param props.title - Property title used in image labels.
+ */
 export default function PropertyGallery({
   images,
   title,

@@ -4,6 +4,7 @@ import PropertiesList from "../../components/PropertiesList";
 import Instructions from "../../components/Instructions";
 import { SITE_URL } from "@/lib/seo";
 
+/** Search and social metadata for the home page. */
 export const metadata: Metadata = {
   title: "Kasa – Locations d’hébergements partout en France",
   description:
@@ -37,6 +38,7 @@ export const metadata: Metadata = {
   },
 };
 
+/** Renders the landing page and its available property listings. */
 export default function Home() {
   return (
     <>

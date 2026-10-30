@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useAuthContext } from "@/context/AuthContext";
 
+/** Displays the signed-in host's profile details in the property form. */
 export default function HostInfo() {
   const { user } = useAuthContext();
 

@@ -6,6 +6,12 @@ import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/context/AuthContext";
 import type { Host } from "@/types/property";
 
+/**
+ * Starts a conversation with the property's host, redirecting guests to sign in.
+ *
+ * @param props.host - Host associated with the property.
+ * @param props.propertyId - Identifier used to return to the property after sign-in.
+ */
 export default function ContactHostButton({
   host,
   propertyId,

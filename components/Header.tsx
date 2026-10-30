@@ -9,6 +9,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import { useFavoritesContext } from "@/context/FavoritesContext";
 import { useMessaging } from "@/context/MessagingContext";
 
+/** Renders responsive site navigation and authenticated-user actions. */
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);

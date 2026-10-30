@@ -9,8 +9,15 @@ import PropertyGallery from '@/components/property/PropertyGallery'
 import { getPropertyById } from '@/lib/properties'
 import { serializeJsonLd, SITE_URL } from '@/lib/seo'
 
+/** Dynamic route parameters used by the property detail page. */
 type Props = { params: Promise<{ id: string }> }
 
+/**
+ * Builds metadata from the requested property, or marks missing listings noindex.
+ *
+ * @param props.params - Promise resolving to the property identifier.
+ * @returns Metadata for the property detail page.
+ */
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { id } = await params
 	const property = await getPropertyById(id).catch(() => null)
@@ -47,6 +54,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	}
 }
 
+/**
+ * Renders the property detail route inside a loading boundary.
+ *
+ * @param props.params - Promise resolving to the property identifier.
+ */
 export default function PropertyPage({ params }: Props) {
 	return (
 		<Suspense
@@ -61,6 +73,7 @@ export default function PropertyPage({ params }: Props) {
 	)
 }
 
+/** Fetches and renders the property details and structured data. */
 async function PropertyContent({ params }: Props) {
 	const { id } = await params
 	const property = await getPropertyById(id).catch(() => null)

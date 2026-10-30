@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 import { useAuthContext } from "@/context/AuthContext";
 
+/** Renders the account registration form and handles its validation. */
 export default function SigninForm() {
 	const router = useRouter();
 	const { register, error: backendError, clearError } = useAuthContext();
@@ -17,6 +18,7 @@ export default function SigninForm() {
 		clearError();
 	}, [clearError]);
 
+	/** Returns a validation message when the password does not meet requirements. */
 	function validatePassword(password: string): string | null {
 		if (password.length < 8) {
 			return "Le mot de passe doit contenir au moins 8 caractères.";

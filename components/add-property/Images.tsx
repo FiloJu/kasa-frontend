@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useAddProperty } from "@/context/AddPropertyContext";
 import { apiFetch } from "@/lib/api";
 
+/** Response fields returned after an image upload. */
 type UploadResponse = {
   url: string;
   filename: string;
@@ -13,6 +14,12 @@ type UploadResponse = {
   purpose: string;
 };
 
+/**
+ * Renders the cover and gallery image upload controls for a property.
+ *
+ * @param props.errors - Validation messages keyed by form field.
+ * @param props.onUploadingChange - Reports whether an upload is in progress.
+ */
 export default function Images({
   errors,
   onUploadingChange,

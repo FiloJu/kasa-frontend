@@ -8,6 +8,12 @@ import { apiFetch } from "@/lib/api";
 
 const tagOptions = ["Appartement", "Maison", "Studio", "Chalet"];
 
+/**
+ * Renders and validates the property's main details and submits the listing.
+ *
+ * @param props.onErrorsChange - Reports validation messages to the parent form.
+ * @param props.onSubmittingChange - Reports whether the listing is being submitted.
+ */
 export default function MainForm({
   onErrorsChange,
   onSubmittingChange,

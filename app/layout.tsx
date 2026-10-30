@@ -9,6 +9,7 @@ import { FavoritesProvider } from "@/context/FavoritesContext";
 import { MessagingProvider } from "@/context/MessagingContext";
 import { serializeJsonLd, SITE_URL } from "@/lib/seo";
 
+/** Font configuration shared by the root document. */
 const inter = Inter({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '900'],
@@ -16,6 +17,7 @@ const inter = Inter({
   display: 'swap',
 })
 
+/** Default metadata shared by the application routes. */
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -47,6 +49,7 @@ export const metadata: Metadata = {
   },
 }
 
+/** Provides the root document, shared providers, navigation, and footer. */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const siteSchema = {
     '@context': 'https://schema.org',

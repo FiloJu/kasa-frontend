@@ -7,6 +7,7 @@ import PropertyCard from "@/components/PropertyCard";
 import { useAuthContext } from "@/context/AuthContext";
 import { useFavoritesContext } from "@/context/FavoritesContext";
 
+/** Displays the signed-in user's saved properties. */
 export default function FavoritesPage() {
 	const router = useRouter();
 	const { user, loading: authLoading } = useAuthContext();

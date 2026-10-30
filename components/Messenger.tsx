@@ -6,6 +6,7 @@ import { useAuthContext } from '@/context/AuthContext';
 import { useMessaging } from '@/context/MessagingContext';
 import { getPropertyById } from '@/lib/properties';
 
+/** Renders the user's conversations and opens a thread for a selected property. */
 export default function Messenger() {
   const router = useRouter();
   const searchParams = useSearchParams();

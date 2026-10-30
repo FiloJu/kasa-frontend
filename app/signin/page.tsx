@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import RegisterForm from "../../components/SigninForm";
 
+/** Search metadata for the account registration route. */
 export const metadata: Metadata = {
   title: "Créer un compte",
   description:
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
   },
 };
 
+/** Renders the account registration page and form. */
 export default function SigninPage() {
   return (
     <section className="w-full flex justify-center items-center mb-8 pt-8 ">

@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { getProperties } from "@/lib/properties";
 import { SITE_URL } from "@/lib/seo";
 
+/** Generates sitemap entries for public pages and available properties. */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const properties = await getProperties();
 

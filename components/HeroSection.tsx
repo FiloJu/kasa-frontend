@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+/** Displays the home page introduction and hero image. */
 export default function HeroSection() {
   return (
     <section

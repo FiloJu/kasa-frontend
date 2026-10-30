@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
 
+/** Generates crawler access rules and links to the XML sitemap. */
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {

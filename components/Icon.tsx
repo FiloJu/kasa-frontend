@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-// Noms d'icônes disponibles dans /public/icons/
+/** Names of the icons available through the shared Icon component. */
 export type IconName =
   | 'back'
   | 'burger'

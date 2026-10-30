@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/context/AuthContext";
 import { useMessaging } from "@/context/MessagingContext";
 
+/** Renders the legacy messaging page with thread selection and message sending. */
 export default function MessagesPage() {
 	const router = useRouter();
 	const { user, loading: authLoading } = useAuthContext();

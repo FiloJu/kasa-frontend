@@ -11,6 +11,7 @@ import Equipments from "@/components/add-property/Equipments";
 import HostInfo from "@/components/add-property/HostInfo";
 import PropertyImages from "@/components/add-property/Images";
 
+/** Coordinates authentication, validation, and submission for property creation. */
 function AddPropertyContentInner() {
   const router = useRouter();
   const { user, loading: authLoading, upgradeToOwner } = useAuthContext();
@@ -156,6 +157,7 @@ function AddPropertyContentInner() {
   );
 }
 
+/** Wraps the property creation form in its state provider. */
 export default function AddPropertyContent() {
   return (
     <AddPropertyProvider>

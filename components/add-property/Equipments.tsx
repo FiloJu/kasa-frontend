@@ -2,6 +2,11 @@
 
 import { useAddProperty } from "@/context/AddPropertyContext";
 
+/**
+ * Renders selectable equipment options for a new property.
+ *
+ * @param props.errors - Validation messages keyed by form field.
+ */
 export default function Equipments({
   errors,
 }: {

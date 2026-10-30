@@ -22,6 +22,7 @@ interface AuthContextType {
   clearError: () => void;
 }
 
+/** React context that exposes the current authentication state and actions. */
 const AuthContext = createContext<AuthContextType | null>(null);
 export { AuthContext };
 

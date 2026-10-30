@@ -2,6 +2,7 @@ import { UserPublic } from "./user";
 import { Host } from "./property";
 import { AuthUser } from "./auth";
 
+/** A message exchanged between the participants of a conversation thread. */
 export interface Message {
   id: string;
   threadId: string;
@@ -11,6 +12,7 @@ export interface Message {
   read: boolean;
 }
 
+/** A conversation summary shown in the messaging interface. */
 export interface Thread {
   id: string;
   otherUser: UserPublic | Host;
@@ -18,6 +20,7 @@ export interface Thread {
   updatedAt: string;
 }
 
+/** State and actions exposed by the messaging context. */
 export interface MessagingContextType {
   currentUser: AuthUser | null;
   threads: Thread[];

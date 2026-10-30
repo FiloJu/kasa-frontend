@@ -10,7 +10,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
  * @function apiFetch
  * @param {string} endpoint - API endpoint path (e.g., '/api/properties').
  * @param {RequestInit} [options] - Optional fetch configuration (headers, method, body, etc.).
- * @returns {Promise<T>} Parsed JSON response of type T.
+ * @returns {Promise<T>} Parsed JSON response of type T, or `undefined` for an empty response.
  * @throws {Error} If the request fails; includes status and parsed error message from API.
  */
 export async function apiFetch<T>(

@@ -1,6 +1,9 @@
+/**
+ * Trims leading and trailing whitespace from a title.
+ *
+ * @param title - The title to normalize.
+ * @returns The title without surrounding whitespace.
+ */
 export function formatTitle(title: string): string {
-  /**
-   * Removes leading and trailing whitespace from the title.
-   */
   return title.trim();
 }

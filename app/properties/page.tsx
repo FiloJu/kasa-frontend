@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PropertiesList from "../../components/PropertiesList";
 
+/** Search metadata for the property listing page. */
 export const metadata: Metadata = {
   title: "Tous les logements",
   description:
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
   },
 };
 
+/** Renders the list of available properties. */
 export default function PropertiesPage() {
   return <PropertiesList />;
 }

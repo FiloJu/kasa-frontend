@@ -27,6 +27,7 @@ interface FavoritesContextType {
   refreshFavorites: () => Promise<void>;
 }
 
+/** React context that exposes the current user's favorites and actions. */
 const FavoritesContext = createContext<FavoritesContextType | null>(null);
 export { FavoritesContext };
 

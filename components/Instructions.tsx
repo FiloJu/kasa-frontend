@@ -1,3 +1,4 @@
+/** Explains the three main steps for using the Kasa platform. */
 export default function Instructions() {
   return (
     <section

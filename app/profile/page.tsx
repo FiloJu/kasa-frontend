@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { useAuthContext } from "@/context/AuthContext";
 
+/** Displays the signed-in user's account details. */
 export default function ProfilePage() {
   const router = useRouter();
   const { user, loading } = useAuthContext();
