@@ -95,6 +95,8 @@ export default function Header() {
             )}
           </Link>
 
+          {user && <div className="w-px h-2 bg-main-red"></div>}
+
           {user && (
             <div className="relative">
               <button
@@ -103,12 +105,12 @@ export default function Header() {
                 aria-expanded={accountMenuOpen}
                 aria-controls="account-menu"
                 onClick={() => setAccountMenuOpen((open) => !open)}
-                className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#99331A]"
+                className="flex h-5 w-5 items-center justify-center rounded-full hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#99331A]"
               >
                 <svg
                   aria-hidden="true"
                   viewBox="0 0 24 24"
-                  className="h-6 w-6 fill-none stroke-current text-gray-dark"
+                  className="h-5 w-5 fill-none stroke-current text-main-red"
                   strokeWidth="1.7"
                   strokeLinecap="round"
                   strokeLinejoin="round"
