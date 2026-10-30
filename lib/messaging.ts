@@ -19,7 +19,7 @@ export async function startConversation(
   otherUserId: string,
   content: string
 ): Promise<{ threadId: string }> {
-  const payload = { propertyId, otherUserId, content };
+  const payload = { propertyId, otherUserId, recipientId: otherUserId, content };
   return apiFetch("/api/messaging/start", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
