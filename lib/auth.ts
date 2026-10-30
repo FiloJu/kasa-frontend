@@ -7,7 +7,7 @@ async function authFetch(path: string, options: RequestInit = {}): Promise<Respo
   }
 
   try {
-    return await fetch(`${API_URL}/auth/${path}`, {
+    return await fetch(`/auth/${path}`, {
       ...options,
       credentials: "include",
     });
