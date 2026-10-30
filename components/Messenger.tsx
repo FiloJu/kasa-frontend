@@ -59,6 +59,12 @@ export default function Messenger() {
           return;
         }
 
+        // A host cannot start a thread on their own property; they only reply to clients.
+        if (String(property.host.id) === String(user?.id)) {
+          setLoading(false);
+          return;
+        }
+
         const threadId = await startConversationWithHost(property.host, propertyId);
         if (threadId) {
           setSelectedThreadId(threadId);
@@ -66,7 +72,12 @@ export default function Messenger() {
           setShowList(false);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Erreur lors du démarrage de la conversation');
+        const message = err instanceof Error ? err.message : '';
+        setError(
+          message.includes('Only clients and property owners can start a thread')
+            ? "Votre compte (ex. administrateur) ne peut pas démarrer de conversation. Utilisez un compte voyageur ou hôte."
+            : message || 'Erreur lors du démarrage de la conversation'
+        );
       } finally {
         setLoading(false);
       }
