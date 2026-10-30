@@ -22,7 +22,7 @@ export default function FavoritesPage() {
 	if (authLoading || !user) return null;
 
 	return (
-		<div className="mx-auto flex w-full max-w-278.75 flex-col items-center px-4">
+		<div className="mx-auto flex w-full max-w-278.75 flex-col items-center px-4 md:px-0">
 			<h1 className="mt-8 text-center text-[32px] font-bold text-main-red">
 				Vos favoris
 			</h1>
@@ -39,7 +39,10 @@ export default function FavoritesPage() {
 				</p>
 			)}
 
-			<div className="mx-auto mb-16 mt-10 flex w-full max-w-278.75 flex-wrap justify-center gap-6 lg:justify-start">
+			<section
+				className="mx-auto mb-16 mt-10 flex w-full max-w-88.75 flex-wrap justify-center gap-6 md:max-w-183.5 lg:max-w-278.75 lg:justify-start"
+				aria-label="Logements favoris"
+			>
 				{loading ? (
 					<p className="w-full text-center text-gray-dark" role="status">
 						Chargement des favoris…
@@ -53,7 +56,7 @@ export default function FavoritesPage() {
 						Vous n’avez encore aucun favori.
 					</p>
 				)}
-			</div>
+			</section>
 		</div>
 	);
 }

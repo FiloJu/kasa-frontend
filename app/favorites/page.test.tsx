@@ -187,13 +187,19 @@ test('renders property cards when favorites are available', () => {
     error: null,
   } as any)
 
-  render(<FavoritesPage />)
+  const { container } = render(<FavoritesPage />)
 
   const propertyCard1 = screen.queryByTestId('property-card-1')
   const propertyCard2 = screen.queryByTestId('property-card-2')
 
   expect(propertyCard1).not.toBeNull()
   expect(propertyCard2).not.toBeNull()
+
+  const favorites = container.querySelector('section[aria-label="Logements favoris"]')
+  expect(favorites).not.toBeNull()
+  expect(favorites?.className).toContain('max-w-88.75')
+  expect(favorites?.className).toContain('md:max-w-183.5')
+  expect(favorites?.className).toContain('lg:max-w-278.75')
 })
 
 test('returns null when user is not authenticated and auth is not loading', () => {
