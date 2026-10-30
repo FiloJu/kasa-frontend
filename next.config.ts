@@ -26,6 +26,10 @@ const nextConfig: NextConfig = {
         destination: `${configuredApiUrl}/api/:path*`,
       },
       {
+        source: "/uploads/:path*",
+        destination: `${configuredApiUrl}/uploads/:path*`,
+      },
+      {
         source: "/auth/:path*",
         destination: `${configuredApiUrl}/auth/:path*`,
       },

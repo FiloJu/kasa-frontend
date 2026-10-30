@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import Button from '@/components/Button'
@@ -46,7 +47,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	}
 }
 
-export default async function PropertyPage({ params }: Props) {
+export default function PropertyPage({ params }: Props) {
+	return (
+		<Suspense
+			fallback={
+				<div className="mx-auto w-full max-w-6xl px-4 py-12 text-sm text-gray-dark md:px-8">
+					Chargement du logement…
+				</div>
+			}
+		>
+			<PropertyContent params={params} />
+		</Suspense>
+	)
+}
+
+async function PropertyContent({ params }: Props) {
 	const { id } = await params
 	const property = await getPropertyById(id).catch(() => null)
 
